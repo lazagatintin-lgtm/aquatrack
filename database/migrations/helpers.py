@@ -57,6 +57,66 @@ def get_primary_key_column(cursor, table_name):
     return rows[0][0]
 
 
+def normalize_legacy_user_schema(cursor):
+    has_user_id = column_exists(cursor, "tbl_users", "user_id")
+    has_id = column_exists(cursor, "tbl_users", "id")
+
+    if has_user_id and not has_id:
+        cursor.execute(
+            "ALTER TABLE `tbl_users` "
+            "RENAME COLUMN `user_id` TO `id`"
+        )
+    elif not has_id:
+        raise RuntimeError(
+            "tbl_users must have an id or user_id primary key."
+        )
+    elif has_user_id:
+        raise RuntimeError(
+            "tbl_users contains both id and user_id columns; "
+            "resolve the duplicate keys before migrating."
+        )
+
+    if not column_exists(cursor, "tbl_users", "name"):
+        if not (
+            column_exists(cursor, "tbl_users", "first_name")
+            and column_exists(cursor, "tbl_users", "last_name")
+        ):
+            raise RuntimeError(
+                "tbl_users must have name or both first_name and last_name."
+            )
+
+        cursor.execute(
+            "ALTER TABLE `tbl_users` "
+            "ADD COLUMN `name` VARCHAR(255) NULL"
+        )
+        cursor.execute("""
+            UPDATE `tbl_users`
+            SET `name` = COALESCE(
+                NULLIF(
+                    TRIM(CONCAT_WS(
+                        ' ',
+                        NULLIF(TRIM(`first_name`), ''),
+                        NULLIF(TRIM(`last_name`), '')
+                    )),
+                    ''
+                ),
+                SUBSTRING_INDEX(`email`, '@', 1)
+            )
+            WHERE `name` IS NULL OR `name` = ''
+        """)
+        cursor.execute(
+            "ALTER TABLE `tbl_users` "
+            "MODIFY COLUMN `name` VARCHAR(255) NOT NULL"
+        )
+
+    for column_name in ("first_name", "last_name", "username"):
+        if column_exists(cursor, "tbl_users", column_name):
+            cursor.execute(
+                f"ALTER TABLE `tbl_users` "
+                f"MODIFY COLUMN `{column_name}` VARCHAR(100) NULL DEFAULT NULL"
+            )
+
+
 def ensure_legacy_code(
     cursor,
     table_name,

@@ -12,6 +12,7 @@ from auth.rate_limit import (
 )
 from database.migrations import discover_migrations
 from database.migrations.versions import v0002_positive_product_price
+from database.migrations.versions import v0004_staff_registration_approvals
 from werkzeug.security import generate_password_hash
 
 
@@ -78,6 +79,21 @@ class FakeMigrationCursor:
 
 class OperationsTests(unittest.TestCase):
 
+    def test_staff_approval_migration_uses_legacy_user_primary_key(self):
+        cursor = Mock()
+        cursor.fetchall.return_value = [("user_id",)]
+
+        v0004_staff_registration_approvals.upgrade(cursor)
+
+        create_query = next(
+            call.args[0]
+            for call in cursor.execute.call_args_list
+            if "CREATE TABLE IF NOT EXISTS tbl_staff_registration_approvals"
+            in call.args[0]
+        )
+        self.assertIn("REFERENCES tbl_users (`user_id`)", create_query)
+        self.assertNotIn("REFERENCES tbl_users (id)", create_query)
+
     def test_create_owner_checks_do_not_require_id_column(self):
         connection = Mock()
         connection.is_connected.return_value = True
@@ -116,7 +132,8 @@ class OperationsTests(unittest.TestCase):
                 "v0002_positive_product_price",
                 "v0003_login_rate_limits",
                 "v0004_staff_registration_approvals",
-                "v0005_profile_photos"
+                "v0005_profile_photos",
+                "v0006_legacy_user_columns"
             ]
         )
 

@@ -2,7 +2,7 @@ import os
 import re
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 os.environ.setdefault("SECRET_KEY", "unit-test-secret-key")
 
@@ -12,12 +12,47 @@ from database.db import (
     get_product_primary_key_column
 )
 from database.migrations.helpers import ensure_legacy_code
+from database.migrations.helpers import normalize_legacy_user_schema
 
 
 ROOT = Path(__file__).resolve().parent
 
 
 class CodeGeneratorTests(unittest.TestCase):
+
+    def test_legacy_user_schema_is_normalized_for_current_app(self):
+        cursor = Mock()
+        legacy_columns = {
+            "user_id",
+            "first_name",
+            "last_name",
+            "username"
+        }
+
+        with patch(
+            "database.migrations.helpers.column_exists",
+            side_effect=lambda _, __, column: column in legacy_columns
+        ):
+            normalize_legacy_user_schema(cursor)
+
+        statements = [call.args[0] for call in cursor.execute.call_args_list]
+        self.assertIn(
+            "ALTER TABLE `tbl_users` RENAME COLUMN `user_id` TO `id`",
+            statements
+        )
+        self.assertTrue(any(
+            "ADD COLUMN `name` VARCHAR(255) NULL" in statement
+            for statement in statements
+        ))
+        self.assertTrue(any(
+            "CONCAT_WS" in statement and "first_name" in statement
+            for statement in statements
+        ))
+        self.assertTrue(any(
+            "MODIFY COLUMN `username` VARCHAR(100) NULL DEFAULT NULL"
+            in statement
+            for statement in statements
+        ))
 
     def test_legacy_code_backfill_uses_table_primary_key(self):
         cursor = Mock()

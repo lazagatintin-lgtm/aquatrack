@@ -1,10 +1,14 @@
 from database.migrations.helpers import (
     add_column_if_missing,
-    ensure_legacy_code
+    constraint_exists,
+    ensure_legacy_code,
+    normalize_legacy_user_schema
 )
 
 
 def upgrade(cursor):
+    normalize_legacy_user_schema(cursor)
+
     cursor.execute("""
         SELECT DATA_TYPE
         FROM information_schema.COLUMNS
