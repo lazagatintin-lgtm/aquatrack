@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.shopping-cart {
+    width: 100%;
+    max-width: 1100px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    color: #24434a;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .page-header {
+    margin-bottom: 24px;
+}
+
+.shopping-cart .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.shopping-cart .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.shopping-cart .flash-messages {
+    margin-bottom: 20px;
+}
+
+.shopping-cart .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border: 1px solid #c9ead8;
+}
+
+.shopping-cart .message.error,
+.shopping-cart .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border: 1px solid #f5d1d1;
+}
+
+.shopping-cart .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border: 1px solid #f2e1b8;
+}
+
+.shopping-cart .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border: 1px solid #d3e6f0;
+}
+
+.shopping-cart .cart-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+    min-width: 0;
+}
+
+.shopping-cart .cart-card {
+    min-width: 0;
+    padding: 21px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.shopping-cart .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    min-width: 0;
+}
+
+.shopping-cart .item-details {
+    min-width: 0;
+    flex: 1 1 220px;
+}
+
+.shopping-cart .item-details h3 {
+    margin: 0 0 12px;
+    color: #126b70;
+    font-size: 18px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .item-details p {
+    margin: 6px 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .item-details strong {
+    color: #526b70;
+}
+
+.shopping-cart .item-details .subtotal {
+    margin-top: 12px;
+    color: #126b70;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.shopping-cart .remove-form {
+    flex: 0 0 auto;
+    max-width: 100%;
+}
+
+.shopping-cart .btn-remove {
+    max-width: 100%;
+    padding: 10px 16px;
+    background: #fde9e9;
+    border: 1px solid #f5d1d1;
+    border-radius: 7px;
+    color: #bd4545;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.shopping-cart .btn-remove:hover {
+    background: #fbdada;
+}
+
+.shopping-cart .btn-remove:focus-visible,
+.shopping-cart .btn-primary:focus-visible,
+.shopping-cart .back-link:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.shopping-cart .pickup-notice {
+    padding: 14px 16px;
+    margin-top: 20px;
+    background: #eff8f7;
+    border: 1px solid #dcecea;
+    border-radius: 9px;
+    color: #35656a;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .cart-total {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f5faf9;
+    border: 1px solid #e1eeee;
+    border-radius: 10px;
+}
+
+.shopping-cart .cart-total h2 {
+    margin: 0;
+    color: #126b70;
+    font-size: 22px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .cart-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    min-width: 0;
+    margin-top: 20px;
+}
+
+.shopping-cart .btn-primary {
+    display: inline-block;
+    max-width: 100%;
+    padding: 12px 19px;
+    background: #16817e;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    overflow-wrap: anywhere;
+    transition: background 0.2s ease;
+}
+
+.shopping-cart .btn-primary:hover {
+    background: #106b69;
+}
+
+.shopping-cart .back-link {
+    max-width: 100%;
+    color: #126b70;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .back-link:hover {
+    color: #0b5156;
+    text-decoration: underline;
+}
+
+.shopping-cart .empty-message {
+    padding: 40px 22px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.shopping-cart .empty-message h3 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 20px;
+}
+
+.shopping-cart .empty-message p {
+    margin: 6px 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.shopping-cart .empty-message .btn-primary {
+    margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+    .shopping-cart {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .shopping-cart {
+        padding: 15px;
+    }
+
+    .shopping-cart .page-header {
+        margin-bottom: 18px;
+    }
+
+    .shopping-cart .page-header h1 {
+        font-size: 23px;
+    }
+
+    .shopping-cart .page-header p {
+        font-size: 13px;
+    }
+
+    .shopping-cart .cart-card {
+        padding: 17px;
+    }
+
+    .shopping-cart .cart-item {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .shopping-cart .remove-form,
+    .shopping-cart .btn-remove {
+        width: 100%;
+    }
+
+    .shopping-cart .cart-total {
+        justify-content: flex-start;
+        padding: 16px;
+    }
+
+    .shopping-cart .cart-total h2 {
+        font-size: 20px;
+    }
+
+    .shopping-cart .cart-actions {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .shopping-cart .cart-actions .btn-primary {
+        width: 100%;
+    }
+
+    .shopping-cart .cart-actions .back-link {
+        text-align: center;
+    }
+
+    .shopping-cart .empty-message {
+        padding: 30px 17px;
+    }
+}
+
+@media (max-width: 380px) {
+    .shopping-cart {
+        padding: 12px;
+    }
+
+    .shopping-cart .cart-card {
+        padding: 14px;
+    }
+
+    .shopping-cart .page-header h1 {
+        font-size: 21px;
+    }
+
+    .shopping-cart .cart-total h2 {
+        font-size: 18px;
+    }
+
+    .shopping-cart .pickup-notice {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="shopping-cart" aria-labelledby="cart-title">
+
+    <header class="page-header">
+        <h1 id="cart-title">Shopping Cart</h1>
+
+        <p>
+            Review your selected fish products before proceeding to checkout.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if cart_items %}
+
+        <div class="cart-list">
+
+            {% for item in cart_items %}
+
+                <article class="cart-card">
+
+                    <div class="cart-item">
+
+                        <div class="item-details">
+                            <h2>{{ item.product_name }}</h2>
+
+                            <p>
+                                <strong>Category:</strong>
+                                {{ item.category or "Fish" }}
+                            </p>
+
+                            <p>
+                                <strong>Price:</strong>
+                                ₱{{ "%.2f"|format(item.price|float) }}
+                            </p>
+
+                            <p>
+                                <strong>Quantity:</strong>
+                                {{ item.quantity }}
+                            </p>
+
+                            <p class="subtotal">
+                                Subtotal:
+                                ₱{{ "%.2f"|format(item.subtotal|float) }}
+                            </p>
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('customer.remove_from_cart', product_id=item.id) }}"
+                            class="remove-form"
+                            onsubmit="return confirm('Are you sure you want to remove this fish from your cart?');"
+                        >
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button type="submit" class="btn-remove">
+                                Remove Item
+                            </button>
+                        </form>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+        <aside class="pickup-notice">
+            <strong>Store Pickup Only:</strong>
+            Orders must be collected at JRJ PETSHOP.
+            Delivery service is not available.
+        </aside>
+
+        <div class="cart-total">
+            <h2>
+                Total:
+                ₱{{ "%.2f"|format(total|float) }}
+            </h2>
+        </div>
+
+        <nav class="cart-actions" aria-label="Cart actions">
+
+            <a
+                href="{{ url_for('customer.checkout') }}"
+                class="btn-primary"
+            >
+                Proceed to Checkout
+            </a>
+
+            <a
+                href="{{ url_for('customer.catalog') }}"
+                class="back-link"
+            >
+                Continue Shopping
+            </a>
+
+        </nav>
+
+    {% else %}
+
+        <div class="empty-message">
+            <h2>Your Shopping Cart is Empty</h2>
+
+            <p>
+                You have not added any fish products to your cart yet.
+            </p>
+
+            <p>
+                Browse the daily fish catalog to see the available products.
+            </p>
+
+            <a
+                href="{{ url_for('customer.catalog') }}"
+                class="btn-primary"
+            >
+                Browse Fish Catalog
+            </a>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

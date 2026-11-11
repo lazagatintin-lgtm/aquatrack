@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.add-product-page {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    color: #172b2a;
+}
+
+.add-product-page .page-header {
+    margin-bottom: 22px;
+}
+
+.add-product-page .page-header h1 {
+    color: #172b2a;
+    line-height: 1.3;
+}
+
+.add-product-page .page-header p {
+    color: #647875;
+    line-height: 1.6;
+}
+
+.add-product-page .content-card {
+    padding: 28px;
+    border: 1px solid #e1ece9;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(34, 76, 70, 0.04);
+}
+
+.add-product-page .form-group {
+    min-width: 0;
+    margin-bottom: 20px;
+}
+
+.add-product-page label {
+    display: block;
+    margin-bottom: 8px;
+    color: #263b36;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.add-product-page input,
+.add-product-page textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 12px 13px;
+    border: 1px solid #cbdad6;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172b2a;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.add-product-page input::placeholder,
+.add-product-page textarea::placeholder {
+    color: #91a19d;
+}
+
+.add-product-page input:focus,
+.add-product-page textarea:focus {
+    outline: none;
+    border-color: #4f9d96;
+    box-shadow: 0 0 0 3px rgba(79, 157, 150, 0.14);
+}
+
+.add-product-page textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.add-product-page .field-note {
+    display: block;
+    margin-top: 6px;
+    color: #718582;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.add-product-page .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 26px;
+}
+
+.add-product-page .form-actions button:focus-visible,
+.add-product-page .form-actions a:focus-visible,
+.add-product-page .page-footer a:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+.add-product-page .page-footer {
+    margin-top: 22px;
+}
+
+.add-product-page .page-footer a {
+    color: #397e79;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.add-product-page .page-footer a:hover {
+    text-decoration: underline;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+    .add-product-page {
+        max-width: 100%;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .add-product-page .page-header {
+        margin-bottom: 18px;
+    }
+
+    .add-product-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .add-product-page .page-header p {
+        font-size: 13px;
+    }
+
+    .add-product-page .content-card {
+        padding: 20px 16px;
+    }
+
+    .add-product-page .form-group {
+        margin-bottom: 18px;
+    }
+
+    .add-product-page .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .add-product-page .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+    .add-product-page .content-card {
+        padding: 18px 13px;
+    }
+
+    .add-product-page .page-header h1 {
+        font-size: 21px;
+    }
+
+    .add-product-page label {
+        font-size: 13px;
+    }
+
+    .add-product-page input,
+    .add-product-page textarea {
+        padding: 11px;
+        font-size: 13px;
+    }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+    .add-product-page *,
+    .add-product-page *::before,
+    .add-product-page *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container add-product-page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Add New Fish Product</h1>
+            <p>Enter the details of the new fish product.</p>
+        </div>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div
+                    class="alert alert-{{ 'danger' if category == 'error' else category }}"
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- PRODUCT FORM -->
+    <div class="content-card">
+
+        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="form-group">
+                <label for="product_name">Product Name</label>
+                <input
+                    type="text"
+                    id="product_name"
+                    name="product_name"
+                    maxlength="100"
+                    placeholder="Enter fish name"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    maxlength="50"
+                    placeholder="Enter fish category"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                    maxlength="1000"
+                    placeholder="Enter product description (optional)"
+                ></textarea>
+
+                <span class="field-note">
+                    You may leave this field blank if there is no additional description.
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="product_image">Product Photo</label>
+                <input
+                    type="file"
+                    id="product_image"
+                    name="product_image"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                >
+                <span class="field-note">
+                    Optional. JPG, PNG, or WebP; maximum file size is 5 MB.
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price (₱)</label>
+                <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    min="0.01"
+                    max="99999999.99"
+                    step="0.01"
+                    placeholder="0.01"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Stock Quantity</label>
+                <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    min="0"
+                    max="2147483647"
+                    step="1"
+                    value="0"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="min_stock">Minimum Stock</label>
+                <input
+                    type="number"
+                    id="min_stock"
+                    name="min_stock"
+                    min="0"
+                    max="2147483647"
+                    step="1"
+                    value="5"
+                    required
+                >
+
+                <span class="field-note">
+                    This value is used to identify products that need restocking.
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="max_stock">Maximum Stock (optional)</label>
+                <input
+                    type="number"
+                    id="max_stock"
+                    name="max_stock"
+                    min="0"
+                    max="2147483647"
+                    step="1"
+                    placeholder="Leave blank if no maximum is set"
+                >
+                <span class="field-note">
+                    You will see an Over Stock alert when current stock exceeds this amount.
+                    It does not block stock entries.
+                </span>
+            </div>
+
+            <!-- FORM ACTIONS -->
+            <div class="form-actions">
+
+                <button type="submit" class="btn btn-primary">
+                    Save Product
+                </button>
+
+                <a
+                    href="{{ url_for('admin.products') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- BACK TO PRODUCT LIST -->
+    <div class="page-footer">
+        <a href="{{ url_for('admin.products') }}">
+            Back to Product List
+        </a>
+    </div>
+
+</div>
+{% endblock %}

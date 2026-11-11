@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Report | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.inventory-report {
+    width: 100%;
+    min-width: 0;
+}
+
+.inventory-report .report-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.inventory-report .report-table-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.inventory-report table {
+    width: 100%;
+    min-width: 850px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.inventory-report th,
+.inventory-report td {
+    padding: 12px 10px;
+    text-align: left;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    vertical-align: middle;
+}
+
+.inventory-report th,
+.inventory-report td {
+    font-size: 13px;
+}
+
+.inventory-report th:nth-child(1),
+.inventory-report td:nth-child(1) { width: 15%; }
+
+.inventory-report th:nth-child(2),
+.inventory-report td:nth-child(2) { width: 20%; }
+
+.inventory-report th:nth-child(3),
+.inventory-report td:nth-child(3) { width: 13%; }
+
+.inventory-report th:nth-child(4),
+.inventory-report td:nth-child(4) { width: 12%; }
+
+.inventory-report th:nth-child(5),
+.inventory-report td:nth-child(5) { width: 10%; }
+
+.inventory-report th:nth-child(6),
+.inventory-report td:nth-child(6) { width: 14%; }
+
+.inventory-report th:nth-child(7),
+.inventory-report td:nth-child(7) { width: 16%; }
+
+.inventory-report .status-badge {
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.inventory-report .status-out {
+    background: #fbeaea;
+    color: #a94e4e;
+}
+
+.inventory-report .report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.inventory-report .summary-card {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid #e1eeee;
+    border-radius: 10px;
+    background: #f8fcfb;
+}
+
+.inventory-report .summary-card span {
+    display: block;
+    margin-bottom: 7px;
+    color: #71858a;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.inventory-report .summary-card strong {
+    display: block;
+    color: #126b70;
+    font-size: 21px;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.inventory-report .summary-alert strong {
+    color: #a76712;
+}
+
+.inventory-report .summary-empty strong {
+    color: #a94e4e;
+}
+
+.inventory-report .product-description {
+    display: block;
+    margin-top: 4px;
+    color: #71858a;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+    .inventory-report th,
+    .inventory-report td {
+        padding: 10px 6px;
+        font-size: 11px;
+    }
+
+    .inventory-report .status-badge {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+}
+
+@media (max-width: 600px) {
+    .inventory-report .report-header-actions {
+        width: 100%;
+    }
+
+    .inventory-report .report-header-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .inventory-report th,
+    .inventory-report td {
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    .inventory-report th {
+        line-height: 1.3;
+    }
+
+    .inventory-report .status-badge {
+        font-size: 9px;
+        padding: 4px;
+    }
+}
+
+@media (max-width: 380px) {
+    .inventory-report th,
+    .inventory-report td {
+        padding: 7px 4px;
+        font-size: 9px;
+    }
+
+    .inventory-report .status-badge {
+        font-size: 8px;
+        padding: 3px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container inventory-report">
+
+    <section class="page-header">
+        <div>
+            <h1>Inventory Report</h1>
+            <p>View the current stock information of all products.</p>
+        </div>
+
+        <div class="report-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </section>
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Product Inventory Records</h2>
+            <p>Monitor product quantities and identify items that need restocking.</p>
+        </div>
+
+        <div class="report-summary" aria-label="Inventory summary">
+            <div class="summary-card">
+                <span>Registered Products</span>
+                <strong>{{ total_products }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Total Physical Stock</span>
+                <strong>{{ total_stock }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Available Products</span>
+                <strong>{{ available_products }}</strong>
+            </div>
+            <div class="summary-card summary-alert">
+                <span>Low Stock Products</span>
+                <strong>{{ low_stock_products }}</strong>
+            </div>
+            <div class="summary-card summary-empty">
+                <span>Out of Stock Products</span>
+                <strong>{{ out_of_stock_products }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Stock Value at Current Price</span>
+                <strong>₱{{ "%.2f"|format(inventory_value) }}</strong>
+            </div>
+        </div>
+
+        <div class="table-container report-table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Code</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Minimum Stock</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.product_code or "N/A" }}</td>
+                        <td>
+                            <strong>{{ product.product_name }}</strong>
+                            {% if product.description %}
+                                <span class="product-description">
+                                    {{ product.description }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ product.category }}</td>
+                        <td>₱{{ "%.2f"|format(product.price|float) }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.min_stock }}</td>
+
+                        <td>
+                            {% if product.quantity|int <= 0 %}
+                                <span class="status-badge status-out">
+                                    Out of Stock
+                                </span>
+                            {% elif product.quantity|int <= product.min_stock|int %}
+                                <span class="status-badge status-low">
+                                    Low Stock
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-available">
+                                    Available
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No inventory records found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

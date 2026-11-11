@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.customer-dashboard {
+    width: 100%;
+    max-width: 1100px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    color: #24434a;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .welcome-panel {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 28px;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, #e8f6f4, #f7fbfa);
+    border: 1px solid #dcecea;
+    border-radius: 14px;
+}
+
+.customer-dashboard .welcome-panel h1 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .welcome-panel p {
+    margin: 6px 0 0;
+    color: #61777b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.customer-dashboard .welcome-panel .customer-greeting {
+    color: #20545a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.customer-dashboard .flash-messages {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 24px;
+}
+
+.customer-dashboard .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border: 1px solid #c9ead8;
+}
+
+.customer-dashboard .message.error,
+.customer-dashboard .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border: 1px solid #f5d1d1;
+}
+
+.customer-dashboard .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border: 1px solid #f2e1b8;
+}
+
+.customer-dashboard .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border: 1px solid #d3e6f0;
+}
+
+.customer-dashboard .menu-heading {
+    margin-bottom: 18px;
+}
+
+.customer-dashboard .menu-heading h2 {
+    margin: 0 0 6px;
+    color: #20545a;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.customer-dashboard .menu-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.customer-dashboard .dashboard-menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+}
+
+.customer-dashboard .dashboard-card {
+    display: block;
+    min-width: 0;
+    padding: 23px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease,
+                border-color 0.2s ease;
+}
+
+.customer-dashboard .dashboard-card:hover {
+    transform: translateY(-3px);
+    border-color: #a9d5d1;
+    box-shadow: 0 7px 18px rgba(28, 83, 88, 0.09);
+}
+
+.customer-dashboard .dashboard-card h3 {
+    margin: 0 0 9px;
+    color: #126b70;
+    font-size: 17px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .dashboard-card p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .dashboard-card:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .customer-dashboard {
+        padding: 20px;
+    }
+
+    .customer-dashboard .dashboard-menu {
+        gap: 14px;
+    }
+
+    .customer-dashboard .dashboard-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .customer-dashboard {
+        padding: 15px;
+    }
+
+    .customer-dashboard .welcome-panel {
+        padding: 20px;
+        margin-bottom: 22px;
+    }
+
+    .customer-dashboard .welcome-panel h1 {
+        font-size: 23px;
+    }
+
+    .customer-dashboard .welcome-panel .customer-greeting {
+        font-size: 15px;
+    }
+
+    .customer-dashboard .welcome-panel p {
+        font-size: 13px;
+    }
+
+    .customer-dashboard .dashboard-menu {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .customer-dashboard .dashboard-card {
+        padding: 19px;
+    }
+
+    .customer-dashboard .menu-heading h2 {
+        font-size: 19px;
+    }
+}
+
+@media (max-width: 380px) {
+    .customer-dashboard {
+        padding: 12px;
+    }
+
+    .customer-dashboard .welcome-panel {
+        padding: 17px;
+    }
+
+    .customer-dashboard .welcome-panel h1 {
+        font-size: 21px;
+    }
+
+    .customer-dashboard .dashboard-card {
+        padding: 16px;
+    }
+
+    .customer-dashboard .dashboard-card h3 {
+        font-size: 16px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="customer-dashboard" aria-labelledby="dashboard-title">
+
+    <header class="welcome-panel">
+        <h1 id="dashboard-title">Customer Dashboard</h1>
+
+        <p class="customer-greeting">
+            Welcome, {{ session.get('name', 'Customer') }}!
+        </p>
+
+        <p>
+            Welcome to JRJ PETSHOP. Browse our available fish products,
+            manage your cart, and keep track of your orders.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="menu-heading">
+        <h2 id="customer-menu-title">Customer Menu</h2>
+        <p>Select a section to continue.</p>
+    </div>
+
+    <nav class="dashboard-menu" aria-labelledby="customer-menu-title">
+
+        <a href="{{ url_for('customer.catalog') }}"
+           class="dashboard-card">
+            <h3>Daily Fish Catalog</h3>
+            <p>
+                Browse the fish products available for today.
+            </p>
+        </a>
+
+        <a href="{{ url_for('customer.cart') }}"
+           class="dashboard-card">
+            <h3>My Cart</h3>
+            <p>
+                View and manage the fish products you have added to your cart.
+            </p>
+        </a>
+
+        <a href="{{ url_for('customer.my_orders') }}"
+           class="dashboard-card">
+            <h3>My Orders</h3>
+            <p>
+                View your orders and check their current status.
+            </p>
+        </a>
+
+        <a href="{{ url_for('payment.payment_history') }}"
+           class="dashboard-card">
+            <h3>Payment History</h3>
+            <p>
+                Review your submitted payments and their verification status.
+            </p>
+        </a>
+
+    </nav>
+
+</section>
+{% endblock %}

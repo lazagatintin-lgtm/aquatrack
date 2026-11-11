@@ -1,0 +1,800 @@
+{% extends "base.html" %}
+
+{% block title %}Database Monitoring | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.database-monitoring {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.database-monitoring .page-heading {
+    margin-bottom: 26px;
+}
+
+.database-monitoring .page-heading h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .page-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.database-monitoring .section {
+    min-width: 0;
+    margin-bottom: 30px;
+}
+
+.database-monitoring .section-title {
+    margin: 0 0 16px;
+    color: #20545a;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.database-monitoring .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+    gap: 16px;
+    min-width: 0;
+}
+
+.database-monitoring .summary-card {
+    min-width: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.database-monitoring .card-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #71858a;
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .card-value {
+    color: #126b70;
+    font-size: 27px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-variant-numeric: tabular-nums;
+}
+
+.database-monitoring .card-note {
+    display: block;
+    margin-top: 6px;
+    color: #8a9a9e;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .data-panel {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.database-monitoring .panel-heading {
+    padding: 17px 20px;
+    border-bottom: 1px solid #e7eeee;
+    color: #20545a;
+    font-size: 15px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .monitoring-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.database-monitoring .monitoring-table th {
+    padding: 12px 9px;
+    background: #eff8f7;
+    color: #35656a;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.database-monitoring .monitoring-table td {
+    padding: 12px 9px;
+    border-bottom: 1px solid #edf2f2;
+    color: #526b70;
+    font-size: 12px;
+    line-height: 1.5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.database-monitoring .monitoring-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.database-monitoring .monitoring-table tbody tr:hover {
+    background: #f8fbfb;
+}
+
+.database-monitoring .status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .status-available,
+.database-monitoring .status-stock-in,
+.database-monitoring .status-verified {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.database-monitoring .status-low {
+    background: #fff3d9;
+    color: #a66b08;
+}
+
+.database-monitoring .status-out,
+.database-monitoring .status-stock-out,
+.database-monitoring .status-rejected {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.database-monitoring .status-other {
+    background: #edf1f2;
+    color: #526663;
+}
+
+.database-monitoring .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    min-width: 0;
+}
+
+.database-monitoring .empty-message {
+    padding: 25px;
+    color: #89999d;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.database-monitoring .currency,
+.database-monitoring .quantity {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .mobile-record-list {
+    display: none;
+}
+
+.database-monitoring .record-card {
+    min-width: 0;
+    padding: 15px;
+    border-bottom: 1px solid #edf2f2;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .record-card:last-child {
+    border-bottom: none;
+}
+
+.database-monitoring .record-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 11px;
+    margin-bottom: 11px;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.database-monitoring .record-card-header strong {
+    color: #126b70;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.database-monitoring .record-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.database-monitoring .record-detail {
+    min-width: 0;
+}
+
+.database-monitoring .record-detail span {
+    display: block;
+    margin-bottom: 3px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.database-monitoring .record-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 900px) {
+    .database-monitoring {
+        padding: 20px;
+    }
+
+    .database-monitoring .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .database-monitoring .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .database-monitoring {
+        padding: 15px;
+    }
+
+    .database-monitoring .page-heading h1 {
+        font-size: 23px;
+    }
+
+    .database-monitoring .page-heading p {
+        font-size: 13px;
+    }
+
+    .database-monitoring .section-title {
+        font-size: 18px;
+    }
+
+    .database-monitoring .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .database-monitoring .summary-card {
+        padding: 14px;
+    }
+
+    .database-monitoring .card-value {
+        font-size: 21px;
+    }
+
+    .database-monitoring .panel-heading {
+        padding: 14px;
+    }
+
+    .database-monitoring .desktop-record-table {
+        display: none;
+    }
+
+    .database-monitoring .mobile-record-list {
+        display: block;
+    }
+
+    .database-monitoring .record-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 380px) {
+    .database-monitoring {
+        padding: 12px;
+    }
+
+    .database-monitoring .summary-grid {
+        gap: 8px;
+    }
+
+    .database-monitoring .summary-card {
+        padding: 11px;
+    }
+
+    .database-monitoring .card-label {
+        font-size: 11px;
+    }
+
+    .database-monitoring .card-value {
+        font-size: 19px;
+    }
+
+    .database-monitoring .card-note {
+        font-size: 10px;
+    }
+
+    .database-monitoring .record-card {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="database-monitoring">
+
+    <div class="page-heading">
+        <h1>Database Monitoring</h1>
+        <p>
+            Monitor AquaTrack inventory records, sales information,
+            verified payments, and stock activity.
+        </p>
+    </div>
+
+    <!-- INVENTORY OVERVIEW -->
+    <section class="section">
+        <h2 class="section-title">Inventory Overview</h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <span class="card-label">Total Products</span>
+                <div class="card-value">
+                    {{ inventory_summary.total_products or 0 }}
+                </div>
+                <span class="card-note">Registered fish products</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Total Stock</span>
+                <div class="card-value">
+                    {{ inventory_summary.total_stock or 0 }}
+                </div>
+                <span class="card-note">Combined stock quantity</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Available Products</span>
+                <div class="card-value">
+                    {{ inventory_summary.available_products or 0 }}
+                </div>
+                <span class="card-note">Products above minimum stock</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Low Stock</span>
+                <div class="card-value">
+                    {{ inventory_summary.low_stock_products or 0 }}
+                </div>
+                <span class="card-note">Products needing restocking</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Out of Stock</span>
+                <div class="card-value">
+                    {{ inventory_summary.out_of_stock_products or 0 }}
+                </div>
+                <span class="card-note">Products with zero stock</span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SALES AND INCOME -->
+    <section class="section">
+        <h2 class="section-title">Sales and Income Analytics</h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <span class="card-label">Total Orders</span>
+                <div class="card-value">
+                    {{ sales_summary.total_orders or 0 }}
+                </div>
+                <span class="card-note">Non-cancelled orders</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Order Amount</span>
+                <div class="card-value">
+                    ₱{{ "{:,.2f}".format(sales_summary.total_sales or 0) }}
+                </div>
+                <span class="card-note">
+                    Total amount of non-cancelled orders
+                </span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Verified Income</span>
+                <div class="card-value">
+                    ₱{{ "{:,.2f}".format(income_summary.verified_income or 0) }}
+                </div>
+                <span class="card-note">
+                    Income from verified payments
+                </span>
+            </div>
+
+            <div class="summary-card">
+                <span class="card-label">Verified Payments</span>
+                <div class="card-value">
+                    {{ income_summary.verified_payments or 0 }}
+                </div>
+                <span class="card-note">
+                    Successfully verified payment records
+                </span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SALES ANALYTICS -->
+    <section class="section">
+        <h2 class="section-title">Sales Analytics</h2>
+
+        <div class="analytics-grid">
+
+            <div class="data-panel">
+                <div class="panel-heading">Top-Selling Fish</div>
+
+                <div class="desktop-record-table">
+                    <table class="monitoring-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Fish Name</th>
+                                <th>Quantity Sold</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ product.product_name }}</td>
+                                <td class="quantity">{{ product.total_sold }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="empty-message">
+                                    No sales records available.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-record-list">
+                    {% for product in top_products %}
+                    <article class="record-card">
+                        <div class="record-card-header">
+                            <strong>#{{ loop.index }} {{ product.product_name }}</strong>
+                        </div>
+                        <div class="record-details">
+                            <div class="record-detail">
+                                <span>Quantity Sold</span>
+                                <strong>{{ product.total_sold }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                    {% else %}
+                    <div class="empty-message">No sales records available.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="data-panel">
+                <div class="panel-heading">
+                    Daily Verified Income - Last 7 Days
+                </div>
+
+                <div class="desktop-record-table">
+                    <table class="monitoring-table">
+                        <thead>
+                            <tr>
+                                <th>Payment Date</th>
+                                <th>Verified Income</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for record in daily_income %}
+                            <tr>
+                                <td>
+                                    {{ record.payment_day.strftime("%b %d, %Y") }}
+                                </td>
+                                <td class="currency">
+                                    ₱{{ "{:,.2f}".format(record.daily_income or 0) }}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="empty-message">
+                                    No verified income recorded in the last 7 days.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-record-list">
+                    {% for record in daily_income %}
+                    <article class="record-card">
+                        <div class="record-details">
+                            <div class="record-detail">
+                                <span>Payment Date</span>
+                                <strong>
+                                    {{ record.payment_day.strftime("%b %d, %Y") }}
+                                </strong>
+                            </div>
+                            <div class="record-detail">
+                                <span>Verified Income</span>
+                                <strong>
+                                    ₱{{ "{:,.2f}".format(record.daily_income or 0) }}
+                                </strong>
+                            </div>
+                        </div>
+                    </article>
+                    {% else %}
+                    <div class="empty-message">
+                        No verified income recorded in the last 7 days.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- INVENTORY DATABASE RECORDS -->
+    <section class="section">
+        <h2 class="section-title">Inventory Database Records</h2>
+
+        <div class="data-panel">
+            <div class="panel-heading">Product Records</div>
+
+            <div class="desktop-record-table">
+                <table class="monitoring-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Minimum Stock</th>
+                            <th>Stock Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in inventory_records %}
+                        <tr>
+                            <td>{{ record.id }}</td>
+                            <td><strong>{{ record.product_name }}</strong></td>
+                            <td>{{ record.category or "—" }}</td>
+                            <td class="currency">
+                                ₱{{ "{:,.2f}".format(record.price or 0) }}
+                            </td>
+                            <td class="quantity">{{ record.quantity }}</td>
+                            <td class="quantity">{{ record.min_stock }}</td>
+                            <td>
+                                {% if record.stock_status == "Available" %}
+                                    <span class="status status-available">Available</span>
+                                {% elif record.stock_status == "Low Stock" %}
+                                    <span class="status status-low">Low Stock</span>
+                                {% else %}
+                                    <span class="status status-out">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-message">
+                                No inventory records available.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-record-list">
+                {% for record in inventory_records %}
+                <article class="record-card">
+                    <div class="record-card-header">
+                        <strong>{{ record.product_name }}</strong>
+
+                        {% if record.stock_status == "Available" %}
+                            <span class="status status-available">Available</span>
+                        {% elif record.stock_status == "Low Stock" %}
+                            <span class="status status-low">Low Stock</span>
+                        {% else %}
+                            <span class="status status-out">Out of Stock</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="record-details">
+                        <div class="record-detail">
+                            <span>Product ID</span>
+                            <strong>{{ record.id }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Category</span>
+                            <strong>{{ record.category or "—" }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Price</span>
+                            <strong>₱{{ "{:,.2f}".format(record.price or 0) }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Quantity</span>
+                            <strong>{{ record.quantity }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Minimum Stock</span>
+                            <strong>{{ record.min_stock }}</strong>
+                        </div>
+                    </div>
+                </article>
+                {% else %}
+                <div class="empty-message">No inventory records available.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENT STOCK HISTORY -->
+    <section class="section">
+        <h2 class="section-title">Recent Stock History</h2>
+
+        <div class="data-panel">
+            <div class="panel-heading">
+                Latest 10 Stock Transactions
+            </div>
+
+            <div class="desktop-record-table">
+                <table class="monitoring-table">
+                    <thead>
+                        <tr>
+                            <th>Record ID</th>
+                            <th>Product</th>
+                            <th>Change Type</th>
+                            <th>Previous Stock</th>
+                            <th>Changed Quantity</th>
+                            <th>New Stock</th>
+                            <th>Reason</th>
+                            <th>Date Recorded</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in stock_history %}
+                        <tr>
+                            <td>{{ record.id }}</td>
+                            <td><strong>{{ record.product_name }}</strong></td>
+                            <td>
+                                {% if record.change_type == "Stock In" %}
+                                    <span class="status status-stock-in">Stock In</span>
+                                {% elif record.change_type == "Stock Out" %}
+                                    <span class="status status-stock-out">Stock Out</span>
+                                {% else %}
+                                    <span class="status status-other">
+                                        {{ record.change_type }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="quantity">{{ record.previous_quantity }}</td>
+                            <td class="quantity">{{ record.changed_quantity }}</td>
+                            <td class="quantity"><strong>{{ record.new_quantity }}</strong></td>
+                            <td>{{ record.reason or "No reason provided" }}</td>
+                            <td>
+                                {% if record.created_at %}
+                                    {{ record.created_at.strftime("%b %d, %Y %I:%M %p") }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-message">
+                                No stock history records available.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-record-list">
+                {% for record in stock_history %}
+                <article class="record-card">
+                    <div class="record-card-header">
+                        <strong>Record #{{ record.id }} — {{ record.product_name }}</strong>
+
+                        {% if record.change_type == "Stock In" %}
+                            <span class="status status-stock-in">Stock In</span>
+                        {% elif record.change_type == "Stock Out" %}
+                            <span class="status status-stock-out">Stock Out</span>
+                        {% else %}
+                            <span class="status status-other">
+                                {{ record.change_type }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="record-details">
+                        <div class="record-detail">
+                            <span>Previous Stock</span>
+                            <strong>{{ record.previous_quantity }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Changed Quantity</span>
+                            <strong>{{ record.changed_quantity }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>New Stock</span>
+                            <strong>{{ record.new_quantity }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Reason</span>
+                            <strong>{{ record.reason or "No reason provided" }}</strong>
+                        </div>
+                        <div class="record-detail">
+                            <span>Date Recorded</span>
+                            <strong>
+                                {% if record.created_at %}
+                                    {{ record.created_at.strftime("%b %d, %Y %I:%M %p") }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </article>
+                {% else %}
+                <div class="empty-message">
+                    No stock history records available.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+# Environment variables and secrets
+.env
+
+# Python virtual environment
+venv/
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Flask instance folder
+instance/
+instance/payment_proofs/
+
+# User-uploaded product images
+static/uploads/products/
+
+# Local database backups
+backups/

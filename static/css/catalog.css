@@ -1,0 +1,353 @@
+.fish-catalog {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.fish-catalog .catalog-header {
+    margin-bottom: 24px;
+}
+
+.fish-catalog .catalog-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.fish-catalog .catalog-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.fish-catalog .flash-messages {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 20px;
+}
+
+.fish-catalog .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border: 1px solid #c9ead8;
+}
+
+.fish-catalog .message.error,
+.fish-catalog .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border: 1px solid #f5d1d1;
+}
+
+.fish-catalog .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border: 1px solid #f2e1b8;
+}
+
+.fish-catalog .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border: 1px solid #d3e6f0;
+}
+
+.fish-catalog .catalog-count {
+    margin-bottom: 16px;
+    color: #71858a;
+    font-size: 13px;
+}
+
+.fish-catalog .product-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+}
+
+.fish-catalog .product-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 21px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fish-catalog .product-image {
+    width: 100%;
+    height: 190px;
+    margin-bottom: 16px;
+    border-radius: 9px;
+    background: #eff8f7;
+    object-fit: cover;
+}
+
+.fish-catalog .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 18px rgba(28, 83, 88, 0.09);
+}
+
+.fish-catalog .product-card h3 {
+    margin: 0 0 13px;
+    color: #126b70;
+    font-size: 19px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .product-info {
+    margin-bottom: 9px;
+    color: #61777b;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .product-info strong {
+    color: #35656a;
+}
+
+.fish-catalog .product-description {
+    min-height: 42px;
+    margin: 0 0 15px;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .product-price {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 20px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .stock-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.fish-catalog .stock-quantity {
+    min-width: 0;
+    color: #61777b;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .stock-status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .status-available {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.fish-catalog .status-out {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.fish-catalog .available-date {
+    margin-bottom: 15px;
+    color: #71858a;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .details-link {
+    display: inline-block;
+    width: fit-content;
+    max-width: 100%;
+    margin-bottom: 16px;
+    color: #126b70;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .details-link:hover {
+    color: #0b5156;
+    text-decoration: underline;
+}
+
+.fish-catalog .details-link:focus-visible {
+    outline: 2px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.fish-catalog .add-cart-form {
+    width: 100%;
+    min-width: 0;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #edf2f2;
+}
+
+.fish-catalog .form-group {
+    margin-bottom: 13px;
+}
+
+.fish-catalog .form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #526b70;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.fish-catalog .form-group input {
+    width: 100%;
+    max-width: 130px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #d5e4e3;
+    border-radius: 7px;
+    color: #24434a;
+    font-size: 14px;
+}
+
+.fish-catalog .form-group input:focus {
+    border-color: #3b9995;
+    outline: 2px solid rgba(59, 153, 149, 0.15);
+}
+
+.fish-catalog .btn-primary,
+.fish-catalog .btn-secondary {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 15px;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .btn-primary {
+    background: #16817e;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.fish-catalog .btn-primary:hover {
+    background: #106b69;
+}
+
+.fish-catalog .btn-primary:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.fish-catalog .btn-secondary {
+    background: #edf1f2;
+    color: #89999d;
+    cursor: not-allowed;
+}
+
+.fish-catalog .empty-message {
+    width: 100%;
+    padding: 40px 22px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.fish-catalog .empty-message h3 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 19px;
+}
+
+.fish-catalog .empty-message p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media (max-width: 1000px) {
+    .fish-catalog .product-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .fish-catalog {
+        padding: 15px;
+    }
+
+    .fish-catalog .catalog-header h1 {
+        font-size: 23px;
+    }
+
+    .fish-catalog .product-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    .fish-catalog .product-card {
+        padding: 18px;
+    }
+
+    .fish-catalog .product-description {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .fish-catalog {
+        padding: 12px;
+    }
+
+    .fish-catalog .product-card {
+        padding: 16px;
+    }
+
+    .fish-catalog .product-card h3 {
+        font-size: 17px;
+    }
+
+    .fish-catalog .product-price {
+        font-size: 19px;
+    }
+}

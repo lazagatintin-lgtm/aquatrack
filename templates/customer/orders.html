@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.my-orders-page {
+    width: 100%;
+    max-width: 1100px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    color: #24434a;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .page-header {
+    margin-bottom: 22px;
+}
+
+.my-orders-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.my-orders-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.my-orders-page .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border-color: #c9ead8;
+}
+
+.my-orders-page .message.error,
+.my-orders-page .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border-color: #f5d1d1;
+}
+
+.my-orders-page .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border-color: #f2e1b8;
+}
+
+.my-orders-page .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border-color: #d3e6f0;
+}
+
+/* DESKTOP TABLE */
+
+.my-orders-page .table-container {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.my-orders-page .data-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.my-orders-page .data-table th {
+    padding: 15px 12px;
+    background: #eff8f7;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .data-table td {
+    padding: 15px 12px;
+    border-top: 1px solid #edf2f2;
+    color: #61777b;
+    font-size: 13px;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .data-table tbody tr:hover {
+    background: #f9fcfc;
+}
+
+.my-orders-page .status-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .status-badge.success {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.my-orders-page .status-badge.warning {
+    background: #fff3d9;
+    color: #a66b08;
+}
+
+.my-orders-page .status-badge.danger {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.my-orders-page .status-badge.info {
+    background: #e9f3f8;
+    color: #356b88;
+}
+
+.my-orders-page .status-badge.secondary {
+    background: #edf0f1;
+    color: #66777b;
+}
+
+.my-orders-page .action-cell {
+    min-width: 0;
+}
+
+.my-orders-page .action-link {
+    display: inline-block;
+    margin: 0 8px 8px 0;
+    color: #147b78;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .action-link:hover {
+    text-decoration: underline;
+}
+
+.my-orders-page .action-form {
+    display: inline-block;
+    max-width: 100%;
+    margin: 0 0 5px;
+}
+
+.my-orders-page .btn-secondary {
+    max-width: 100%;
+    padding: 7px 10px;
+    background: #ffffff;
+    border: 1px solid #d9a5a5;
+    border-radius: 6px;
+    color: #b84c4c;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .btn-secondary:hover {
+    background: #fff0f0;
+}
+
+.my-orders-page .text-muted {
+    color: #8b9a9d;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+/* MOBILE ORDER CARDS */
+
+.my-orders-page .mobile-orders {
+    display: none;
+}
+
+.my-orders-page .order-card {
+    min-width: 0;
+    padding: 17px;
+    margin-bottom: 14px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.my-orders-page .order-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 13px;
+    margin-bottom: 13px;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.my-orders-page .order-card-header h3 {
+    margin: 0;
+    color: #126b70;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.my-orders-page .order-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+}
+
+.my-orders-page .order-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+    font-size: 13px;
+}
+
+.my-orders-page .order-detail .detail-label {
+    color: #71858a;
+    font-weight: 600;
+}
+
+.my-orders-page .order-detail .detail-value {
+    color: #526b70;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .order-detail .amount {
+    color: #126b70;
+    font-weight: 700;
+}
+
+.my-orders-page .order-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid #edf2f2;
+}
+
+.my-orders-page .order-actions .action-link {
+    margin: 0;
+}
+
+.my-orders-page .order-actions .action-form {
+    width: 100%;
+    margin: 0;
+}
+
+.my-orders-page .order-actions .btn-secondary {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 12px;
+}
+
+.my-orders-page .empty-message {
+    padding: 40px 20px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .empty-message h3 {
+    margin: 0 0 10px;
+    color: #20545a;
+    font-size: 19px;
+}
+
+.my-orders-page .empty-message p {
+    margin: 0 0 18px;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.my-orders-page .btn-primary {
+    display: inline-block;
+    max-width: 100%;
+    padding: 11px 18px;
+    background: #16817e;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.my-orders-page .btn-primary:hover {
+    background: #106b69;
+}
+
+.my-orders-page button:focus-visible,
+.my-orders-page a:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+/* TABLET AND MOBILE */
+
+@media (max-width: 900px) {
+    .my-orders-page {
+        padding: 20px;
+    }
+
+    .my-orders-page .data-table th,
+    .my-orders-page .data-table td {
+        padding: 12px 9px;
+        font-size: 11px;
+    }
+
+    .my-orders-page .status-badge {
+        font-size: 10px;
+    }
+
+    .my-orders-page .action-link {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 600px) {
+    .my-orders-page {
+        padding: 15px;
+    }
+
+    .my-orders-page .page-header {
+        margin-bottom: 18px;
+    }
+
+    .my-orders-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .my-orders-page .page-header p {
+        font-size: 13px;
+    }
+
+    .my-orders-page .table-container {
+        display: none;
+    }
+
+    .my-orders-page .mobile-orders {
+        display: block;
+        min-width: 0;
+    }
+
+    .my-orders-page .empty-message {
+        padding: 30px 17px;
+    }
+}
+
+@media (max-width: 380px) {
+    .my-orders-page {
+        padding: 12px;
+    }
+
+    .my-orders-page .order-card {
+        padding: 14px;
+    }
+
+    .my-orders-page .page-header h1 {
+        font-size: 21px;
+    }
+
+    .my-orders-page .order-card-header h3 {
+        font-size: 15px;
+    }
+
+    .my-orders-page .order-detail {
+        font-size: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="my-orders-page" aria-labelledby="orders-title">
+
+    <header class="page-header">
+        <h1 id="orders-title">My Orders</h1>
+        <p>
+            View your previous orders, payment progress, and current order status.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if orders %}
+
+        <!-- DESKTOP TABLE -->
+
+        <div class="table-container">
+            <table class="data-table" aria-label="Your orders">
+                <colgroup>
+                    <col style="width: 12%;">
+                    <col style="width: 20%;">
+                    <col style="width: 18%;">
+                    <col style="width: 20%;">
+                    <col style="width: 30%;">
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Order Number</th>
+                        <th scope="col">Order Date</th>
+                        <th scope="col">Total Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_code or "N/A" }}</td>
+                            <td>{{ order.order_date }}</td>
+
+                            <td>
+                                ₱{{ "%.2f"|format(order.total_amount|float) }}
+                            </td>
+
+                            <td>
+                                {% if order.status in ["Completed", "Paid"] %}
+                                    <span class="status-badge success">
+                                        {{ order.status }}
+                                    </span>
+                                {% elif order.status in ["Pending", "Payment Pending"] %}
+                                    <span class="status-badge warning">
+                                        {{ order.status }}
+                                    </span>
+                                {% elif order.status in ["Cancelled", "Payment Rejected"] %}
+                                    <span class="status-badge danger">
+                                        {{ order.status }}
+                                    </span>
+                                {% elif order.status == "Partially Paid" %}
+                                    <span class="status-badge info">
+                                        {{ order.status }}
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge secondary">
+                                        {{ order.status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="action-cell">
+                                {% if order.status != "Cancelled" %}
+                                    <a
+                                        href="{{ url_for('payment.checkout', sale_id=order.id) }}"
+                                        class="action-link"
+                                    >
+                                        View Payment
+                                    </a>
+                                {% endif %}
+
+                                {% if order.status in ["Pending", "Payment Rejected"] %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('customer.cancel_order', sale_id=order.id) }}"
+                                        class="action-form"
+                                        onsubmit="return confirm('Are you sure you want to cancel this order? The reserved fish stock will be returned to the inventory.');"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="{{ csrf_token() }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn-secondary"
+                                        >
+                                            Cancel Order
+                                        </button>
+                                    </form>
+                                {% elif order.status == "Cancelled" %}
+                                    <span class="text-muted">
+                                        Order cancelled
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">
+                                        Cancellation unavailable
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MOBILE ORDER CARDS -->
+
+        <div class="mobile-orders" aria-label="Your orders">
+
+            {% for order in orders %}
+                <article class="order-card">
+
+                    <header class="order-card-header">
+                        <h2>Order {{ order.order_code or "N/A" }}</h2>
+
+                        {% if order.status in ["Completed", "Paid"] %}
+                            <span class="status-badge success">
+                                {{ order.status }}
+                            </span>
+                        {% elif order.status in ["Pending", "Payment Pending"] %}
+                            <span class="status-badge warning">
+                                {{ order.status }}
+                            </span>
+                        {% elif order.status in ["Cancelled", "Payment Rejected"] %}
+                            <span class="status-badge danger">
+                                {{ order.status }}
+                            </span>
+                        {% elif order.status == "Partially Paid" %}
+                            <span class="status-badge info">
+                                {{ order.status }}
+                            </span>
+                        {% else %}
+                            <span class="status-badge secondary">
+                                {{ order.status }}
+                            </span>
+                        {% endif %}
+                    </header>
+
+                    <div class="order-details">
+                        <div class="order-detail">
+                            <span class="detail-label">Order Date</span>
+                            <span class="detail-value">
+                                {{ order.order_date }}
+                            </span>
+                        </div>
+
+                        <div class="order-detail">
+                            <span class="detail-label">Total Amount</span>
+                            <span class="detail-value amount">
+                                ₱{{ "%.2f"|format(order.total_amount|float) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="order-actions">
+                        {% if order.status != "Cancelled" %}
+                            <a
+                                href="{{ url_for('payment.checkout', sale_id=order.id) }}"
+                                class="action-link"
+                            >
+                                View Payment
+                            </a>
+                        {% endif %}
+
+                        {% if order.status in ["Pending", "Payment Rejected"] %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('customer.cancel_order', sale_id=order.id) }}"
+                                class="action-form"
+                                onsubmit="return confirm('Are you sure you want to cancel this order? The reserved fish stock will be returned to the inventory.');"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn-secondary"
+                                >
+                                    Cancel Order
+                                </button>
+                            </form>
+                        {% elif order.status == "Cancelled" %}
+                            <span class="text-muted">
+                                Order cancelled
+                            </span>
+                        {% else %}
+                            <span class="text-muted">
+                                Cancellation unavailable
+                            </span>
+                        {% endif %}
+                    </div>
+
+                </article>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-message">
+            <h2>No Orders Yet</h2>
+
+            <p>
+                You don't have any orders yet. Browse the daily fish catalog
+                to find available fish.
+            </p>
+
+            <a
+                href="{{ url_for('customer.catalog') }}"
+                class="btn-primary"
+            >
+                Browse Fish
+            </a>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

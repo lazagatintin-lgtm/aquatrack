@@ -1,0 +1,545 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Report | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.inventory-report-page {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.inventory-report-page .page-header {
+    margin-bottom: 24px;
+}
+
+.inventory-report-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.inventory-report-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.inventory-report-page .report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.inventory-report-page .report-stat {
+    padding: 14px;
+    border: 1px solid #e1eeee;
+    border-radius: 10px;
+    background: #f8fcfb;
+}
+
+.inventory-report-page .report-stat span {
+    display: block;
+    margin-bottom: 6px;
+    color: #71858a;
+    font-size: 12px;
+}
+
+.inventory-report-page .report-stat strong {
+    color: #126b70;
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+}
+
+.inventory-report-page .report-stat-alert strong {
+    color: #b42323;
+}
+
+.inventory-report-page .report-stat-over strong {
+    color: #6240a5;
+}
+
+.inventory-report-page .content-section {
+    width: 100%;
+    min-width: 0;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.inventory-report-page .section-heading {
+    margin-bottom: 18px;
+}
+
+.inventory-report-page .section-heading h2 {
+    margin: 0 0 6px;
+    color: #20545a;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.inventory-report-page .section-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.inventory-report-page .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.inventory-report-page .inventory-table th {
+    padding: 13px 10px;
+    background: #eff8f7;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.inventory-report-page .inventory-table td {
+    padding: 13px 10px;
+    border-bottom: 1px solid #edf2f2;
+    color: #526b70;
+    font-size: 13px;
+    line-height: 1.5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.inventory-report-page .inventory-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.inventory-report-page .inventory-table tbody tr:hover {
+    background: #f8fbfb;
+}
+
+.inventory-report-page .inventory-table th:nth-child(1),
+.inventory-report-page .inventory-table td:nth-child(1) {
+    width: 8%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(2),
+.inventory-report-page .inventory-table td:nth-child(2) {
+    width: 17%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(3),
+.inventory-report-page .inventory-table td:nth-child(3) {
+    width: 12%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(4),
+.inventory-report-page .inventory-table td:nth-child(4) {
+    width: 10%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(5),
+.inventory-report-page .inventory-table td:nth-child(5) {
+    width: 10%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(6),
+.inventory-report-page .inventory-table td:nth-child(6) {
+    width: 10%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(7),
+.inventory-report-page .inventory-table td:nth-child(7) {
+    width: 11%;
+}
+
+.inventory-report-page .inventory-table th:nth-child(8),
+.inventory-report-page .inventory-table td:nth-child(8) {
+    width: 22%;
+}
+
+.inventory-report-page .status-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.inventory-report-page .status-low {
+    background: #fff0dc;
+    color: #a76712;
+}
+
+.inventory-report-page .status-available {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.inventory-report-page .status-over {
+    background: #eee8ff;
+    color: #6240a5;
+}
+
+.inventory-report-page .desktop-inventory-table {
+    display: block;
+}
+
+.inventory-report-page .mobile-inventory-list {
+    display: none;
+}
+
+.inventory-report-page .inventory-card {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.inventory-report-page .inventory-card:first-child {
+    padding-top: 0;
+}
+
+.inventory-report-page .inventory-card:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.inventory-report-page .inventory-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 13px;
+}
+
+.inventory-report-page .inventory-card-header strong {
+    color: #126b70;
+    font-size: 14px;
+}
+
+.inventory-report-page .inventory-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.inventory-report-page .inventory-detail {
+    min-width: 0;
+}
+
+.inventory-report-page .inventory-detail span {
+    display: block;
+    margin-bottom: 4px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.inventory-report-page .inventory-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.inventory-report-page .empty-state {
+    padding: 30px 20px;
+    background: #f2f9fb;
+    border: 1px solid #dcebef;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.inventory-report-page .empty-state h3 {
+    margin: 0 0 8px;
+    color: #20545a;
+    font-size: 18px;
+}
+
+.inventory-report-page .empty-state p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.inventory-report-page .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.inventory-report-page .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 17px;
+    background: #6c7c80;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.inventory-report-page .back-button:hover {
+    background: #536267;
+    color: #ffffff;
+}
+
+@media (max-width: 850px) {
+    .inventory-report-page {
+        padding: 20px;
+    }
+
+    .inventory-report-page .content-section {
+        padding: 18px;
+    }
+
+    .inventory-report-page .desktop-inventory-table {
+        display: none;
+    }
+
+    .inventory-report-page .mobile-inventory-list {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .inventory-report-page {
+        padding: 15px;
+    }
+
+    .inventory-report-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .inventory-report-page .content-section {
+        padding: 15px;
+    }
+
+    .inventory-report-page .inventory-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .inventory-report-page .button-group {
+        flex-direction: column;
+    }
+
+    .inventory-report-page .back-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 380px) {
+    .inventory-report-page {
+        padding: 12px;
+    }
+
+    .inventory-report-page .content-section {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="inventory-report-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Inventory Report</h1>
+            <p>View the current stock records of fish products.</p>
+        </div>
+    </div>
+
+    <div class="report-summary" aria-label="Inventory summary">
+        <div class="report-stat">
+            <span>Products</span>
+            <strong>{{ total_products }}</strong>
+        </div>
+        <div class="report-stat">
+            <span>Total Physical Stock</span>
+            <strong>{{ total_stock }}</strong>
+        </div>
+        <div class="report-stat">
+            <span>Available</span>
+            <strong>{{ available_products }}</strong>
+        </div>
+        <div class="report-stat">
+            <span>Low Stock</span>
+            <strong>{{ low_stock_products }}</strong>
+        </div>
+        <div class="report-stat report-stat-alert">
+            <span>Out of Stock</span>
+            <strong>{{ out_of_stock_products }}</strong>
+        </div>
+        <div class="report-stat report-stat-over">
+            <span>Over Stock</span>
+            <strong>{{ over_stock_products }}</strong>
+        </div>
+        <div class="report-stat">
+            <span>Inventory Value</span>
+            <strong>₱{{ "%.2f"|format(inventory_value|float) }}</strong>
+        </div>
+    </div>
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Current Inventory</h2>
+            <p>List of all fish products and their stock levels.</p>
+        </div>
+
+        {% if products %}
+
+            <!-- DESKTOP TABLE -->
+            <div class="desktop-inventory-table">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Current Stock</th>
+                            <th>Minimum Stock</th>
+                            <th>Maximum Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>#{{ product.id }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.category }}</td>
+                            <td>₱{{ "%.2f"|format(product.price|float) }}</td>
+                            <td>{{ product.quantity }}</td>
+                            <td>{{ product.min_stock }}</td>
+                            <td>{{ product.max_stock if product.max_stock is not none else "—" }}</td>
+                            <td>
+                                {% if product.quantity|int <= 0 %}
+                                    <span class="status-badge status-low">
+                                        Out of Stock
+                                    </span>
+                                {% elif product.quantity|int <= product.min_stock|int %}
+                                    <span class="status-badge status-low">
+                                        Low Stock
+                                    </span>
+                                {% elif product.max_stock is not none and product.quantity|int > product.max_stock|int %}
+                                    <span class="status-badge status-over">
+                                        Over Stock
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-available">
+                                        Available
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MOBILE CARDS -->
+            <div class="mobile-inventory-list">
+                {% for product in products %}
+                <article class="inventory-card">
+
+                    <div class="inventory-card-header">
+                        <strong>Product #{{ product.id }}</strong>
+
+                        {% if product.quantity|int <= 0 %}
+                            <span class="status-badge status-low">Out of Stock</span>
+                        {% elif product.quantity|int <= product.min_stock|int %}
+                            <span class="status-badge status-low">Low Stock</span>
+                        {% elif product.max_stock is not none and product.quantity|int > product.max_stock|int %}
+                            <span class="status-badge status-over">Over Stock</span>
+                        {% else %}
+                            <span class="status-badge status-available">Available</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="inventory-details">
+                        <div class="inventory-detail">
+                            <span>Product Name</span>
+                            <strong>{{ product.product_name }}</strong>
+                        </div>
+
+                        <div class="inventory-detail">
+                            <span>Category</span>
+                            <strong>{{ product.category }}</strong>
+                        </div>
+
+                        <div class="inventory-detail">
+                            <span>Price</span>
+                            <strong>₱{{ "%.2f"|format(product.price|float) }}</strong>
+                        </div>
+
+                        <div class="inventory-detail">
+                            <span>Current Stock</span>
+                            <strong>{{ product.quantity }}</strong>
+                        </div>
+
+                        <div class="inventory-detail">
+                            <span>Minimum Stock</span>
+                            <strong>{{ product.min_stock }}</strong>
+                        </div>
+
+                        <div class="inventory-detail">
+                            <span>Maximum Stock</span>
+                            <strong>{{ product.max_stock if product.max_stock is not none else "Not set" }}</strong>
+                        </div>
+                    </div>
+
+                </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Inventory Records Yet</h3>
+                <p>Fish products will appear here once they are added.</p>
+            </div>
+
+        {% endif %}
+
+        <div class="button-group">
+            <a
+                href="{{ url_for('admin.dashboard') }}"
+                class="back-button"
+            >
+                Back to Dashboard
+            </a>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

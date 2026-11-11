@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Daily Fish Catalog | AquaTrack{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="fish-catalog" aria-labelledby="catalog-title">
+
+    <!-- CATALOG HEADER -->
+    <header class="catalog-header">
+        <h1 id="catalog-title">Daily Fish Catalog</h1>
+
+        <p>
+            Explore the fish products available today at JRJ PETSHOP.
+            Select a product to view its details or add it to your cart.
+        </p>
+    </header>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- PRODUCT LIST -->
+    {% if products %}
+
+        <p class="catalog-count" aria-live="polite">
+            {{ products|length }} fish product(s) listed in today's catalog.
+        </p>
+
+        <div class="product-list">
+
+            {% for product in products %}
+
+                <article class="product-card">
+
+                    {% if product.image_path %}
+                        <img
+                            src="{{ url_for('static', filename=product.image_path) }}"
+                            alt="{{ product.product_name }}"
+                            class="product-image"
+                            loading="lazy"
+                        >
+                    {% endif %}
+
+                    <h2>{{ product.product_name }}</h2>
+
+                    <p class="product-info">
+                        <strong>Category:</strong>
+                        {{ product.category or "Not specified" }}
+                    </p>
+
+                    <p class="product-description">
+                        {{ product.description or "No description available." }}
+                    </p>
+
+                    <p class="product-price">
+                        ₱{{ "%.2f"|format(product.price|float) }}
+                    </p>
+
+                    <div class="stock-row">
+
+                        <span class="stock-quantity">
+                            Available Quantity:
+                            <strong>{{ product.available_quantity }}</strong>
+                        </span>
+
+                        {% if product.available_quantity|int > 0 %}
+                            <span class="stock-status status-available">
+                                Available
+                            </span>
+                        {% else %}
+                            <span class="stock-status status-out">
+                                Out of Stock
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <p class="available-date">
+                        <strong>Available Date:</strong>
+
+                        {{ product.catalog_date.strftime('%B %d, %Y') if product.catalog_date else 'Not specified' }}
+                    </p>
+
+                    <a
+                        href="{{ url_for('customer.product_details', product_id=product.id) }}"
+                        class="details-link"
+                    >
+                        View Product Details
+                    </a>
+
+                    <!-- ADD TO CART -->
+                    {% if product.available_quantity|int > 0 %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('customer.add_to_cart') }}"
+                            class="add-cart-form"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="product_id"
+                                value="{{ product.id }}"
+                            >
+
+                            <div class="form-group">
+
+                                <label for="quantity-{{ product.id }}">
+                                    Quantity
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="quantity-{{ product.id }}"
+                                    name="quantity"
+                                    min="1"
+                                    max="{{ product.available_quantity }}"
+                                    value="1"
+                                    step="1"
+                                    required
+                                >
+
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                Add to Cart
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <div class="add-cart-form">
+                            <button
+                                type="button"
+                                class="btn-secondary"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+                        </div>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-message">
+
+            <h2>No Fish Available Today</h2>
+
+            <p>
+                There are currently no fish products available in today's
+                catalog. Please check again later.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

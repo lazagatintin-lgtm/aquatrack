@@ -1,0 +1,223 @@
+
+{% extends "base.html" %}
+
+{% set is_owner = account_type == "owner" %}
+
+{% block title %}
+{{ "Owner Login" if is_owner else "Customer Login" }} | AquaTrack
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.account-auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 70vh;
+    padding: 32px 16px;
+}
+
+.account-auth-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 34px;
+    border: 1px solid #e1eeee;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(28, 83, 88, 0.08);
+}
+
+.account-auth-card h1 {
+    margin: 0;
+    color: #126b70;
+    font-size: 28px;
+    text-align: center;
+}
+
+.account-auth-card .auth-subtitle {
+    margin: 8px 0 24px;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.auth-switcher {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.auth-switcher-group {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 9px;
+    background: #edf5f4;
+}
+
+.auth-switcher a {
+    flex: 1;
+    padding: 9px 8px;
+    border-radius: 6px;
+    color: #42686b;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.auth-switcher a[aria-current="page"] {
+    background: #16817e;
+    color: #fff;
+}
+
+.auth-switcher .auth-mode-tabs a {
+    padding: 6px;
+    font-size: 12px;
+}
+
+.account-auth-card .form-group {
+    margin-bottom: 16px;
+}
+
+.account-auth-card label {
+    display: block;
+    margin-bottom: 7px;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.account-auth-card input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid #d8e6e6;
+    border-radius: 7px;
+    background: #fbfdfd;
+    color: #24434a;
+}
+
+.account-auth-card input:focus {
+    outline: none;
+    border-color: #16817e;
+    box-shadow: 0 0 0 3px rgba(22, 129, 126, 0.12);
+}
+
+.account-auth-card .auth-submit {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 7px;
+    background: #16817e;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.account-auth-card .auth-submit:hover {
+    background: #106b69;
+}
+
+.account-auth-card .auth-links {
+    display: grid;
+    gap: 8px;
+    margin-top: 22px;
+    text-align: center;
+}
+
+.account-auth-card .auth-links a {
+    color: #16817e;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.account-auth-card .auth-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .account-auth-page {
+        min-height: auto;
+        padding: 24px 14px;
+    }
+
+    .account-auth-card {
+        padding: 26px 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="account-auth-page">
+    <div class="account-auth-card">
+        <nav class="auth-switcher" aria-label="Account options">
+            <div class="auth-switcher-group">
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    {% if not is_owner %}aria-current="page"{% endif %}
+                >Customer</a>
+
+                <a
+                    href="{{ url_for('auth.owner_login') }}"
+                    {% if is_owner %}aria-current="page"{% endif %}
+                >Owner</a>
+            </div>
+
+            {% if not is_owner %}
+            <div class="auth-switcher-group auth-mode-tabs">
+                <a href="{{ url_for('auth.login') }}" aria-current="page">Log In</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            </div>
+            {% endif %}
+        </nav>
+
+        <h1>AquaTrack</h1>
+
+        <p class="auth-subtitle">
+            {{ "Private login for the owner." if is_owner else "Sign in to browse products and manage your orders." }}
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.owner_login' if is_owner else 'auth.login') }}"
+            data-prevent-double-submit
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="login-email">Email Address</label>
+
+                <input
+                    type="email"
+                    id="login-email"
+                    name="email"
+                    maxlength="100"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="login-password">Password</label>
+
+                <input
+                    type="password"
+                    id="login-password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="auth-submit">Log In</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

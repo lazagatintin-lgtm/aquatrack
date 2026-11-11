@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Information | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.payment-info-page {
+    width: 100%;
+    max-width: 900px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 25px 16px;
+    color: #24434a;
+    box-sizing: border-box;
+}
+
+.payment-info-page .page-header {
+    margin-bottom: 22px;
+}
+
+.payment-info-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 27px;
+}
+
+.payment-info-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.payment-info-page .payment-card {
+    min-width: 0;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.payment-info-page .payment-card > h2 {
+    margin: 0 0 20px;
+    color: #20545a;
+    font-size: 19px;
+}
+
+.payment-info-page .payment-method {
+    padding: 17px 0;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.payment-info-page .payment-method:first-of-type {
+    padding-top: 0;
+}
+
+.payment-info-page .payment-method:last-of-type {
+    border-bottom: none;
+}
+
+.payment-info-page .payment-method h3 {
+    margin: 0 0 7px;
+    color: #126b70;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.payment-info-page .payment-method p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.payment-info-page .reminder-card {
+    padding: 17px 18px;
+    margin-top: 20px;
+    background: #eff8f7;
+    border: 1px solid #dcecea;
+    border-radius: 9px;
+}
+
+.payment-info-page .reminder-card h3 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 15px;
+}
+
+.payment-info-page .reminder-card ul {
+    padding-left: 20px;
+    margin: 0;
+    color: #526b70;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.payment-info-page .reminder-card li {
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+}
+
+.payment-info-page .pickup-notice {
+    padding: 15px 17px;
+    margin-top: 18px;
+    background: #fff8e9;
+    border: 1px solid #f1e5c8;
+    border-radius: 9px;
+    color: #86631c;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.payment-info-page .pickup-notice p {
+    margin: 5px 0 0;
+}
+
+.payment-info-page .back-link {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 20px;
+    padding: 10px 17px;
+    border: 1px solid #16817e;
+    border-radius: 7px;
+    color: #16817e;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.payment-info-page .back-link:hover {
+    background: #16817e;
+    color: #ffffff;
+}
+
+.payment-info-page .back-link:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .payment-info-page {
+        padding: 18px 14px;
+    }
+
+    .payment-info-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .payment-info-page .payment-card {
+        padding: 18px;
+    }
+
+    .payment-info-page .reminder-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .payment-info-page {
+        padding: 15px 10px;
+    }
+
+    .payment-info-page .payment-card {
+        padding: 15px;
+    }
+
+    .payment-info-page .page-header h1 {
+        font-size: 21px;
+    }
+
+    .payment-info-page .reminder-card ul {
+        padding-left: 18px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="payment-info-page" aria-labelledby="payment-info-title">
+
+    <header class="page-header">
+        <h1 id="payment-info-title">Payment Information</h1>
+
+        <p>
+            Review the available payment methods for your JRJ PETSHOP order.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div
+                        class="message {{ category }}"
+                        role="alert"
+                        style="padding: 12px 16px; margin-bottom: 10px; border-radius: 8px;"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="payment-card" aria-labelledby="payment-methods-title">
+
+        <h2 id="payment-methods-title">Available Payment Methods</h2>
+
+        <article class="payment-method">
+            <h3>GCash</h3>
+            <p>
+                Pay using your GCash account. Enter the payment reference
+                number and upload your proof of payment for admin verification.
+            </p>
+        </article>
+
+        <article class="payment-method">
+            <h3>Maya</h3>
+            <p>
+                Pay using your Maya account. Enter the payment reference
+                number and upload your proof of payment for admin verification.
+            </p>
+        </article>
+
+        <article class="payment-method">
+            <h3>Online Banking</h3>
+            <p>
+                Pay through your online banking account. Enter the payment
+                reference number and upload your proof of payment for
+                admin verification.
+            </p>
+        </article>
+
+        <article class="payment-method">
+            <h3>Cash on Pickup</h3>
+            <p>
+                Pay in cash when you personally collect your order
+                at JRJ PETSHOP.
+            </p>
+        </article>
+
+        <aside class="reminder-card" aria-labelledby="payment-reminders-title">
+            <h3 id="payment-reminders-title">Payment Reminders</h3>
+
+            <ul>
+                <li>You may use cash, an e-wallet, or online banking, and split a payment between up to two different methods at a time.</li>
+                <li>Partial payments are allowed until the order is fully paid. Wait for admin review before submitting another payment.</li>
+                <li>Payment amounts must not exceed the remaining order balance.</li>
+                <li>GCash, Maya, and Online Banking payments require a reference number and proof of payment.</li>
+                <li>Online payments must be verified by the admin.</li>
+                <li>Your order will be marked as fully paid once the verified payments cover the total amount.</li>
+            </ul>
+        </aside>
+
+        <aside class="pickup-notice" aria-label="Store pickup information">
+            <strong>Store Pickup Only</strong>
+
+            <p>
+                Orders must be collected personally at JRJ PETSHOP.
+                Delivery service is not available.
+            </p>
+        </aside>
+
+    </section>
+
+    <a
+        href="{{ url_for('customer.my_orders') }}"
+        class="back-link"
+    >
+        Back to My Orders
+    </a>
+
+</section>
+{% endblock %}

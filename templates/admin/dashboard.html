@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-dashboard {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 28px 20px 45px;
+    color: #172b2a;
+}
+
+/* WELCOME SECTION */
+
+.admin-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px;
+    margin-bottom: 28px;
+    border: 1px solid #d9ebe7;
+    border-radius: 17px;
+    background: linear-gradient(120deg, #e5f3f1, #f7fbfa);
+}
+
+.admin-welcome-content {
+    min-width: 0;
+}
+
+.admin-welcome-label {
+    margin-bottom: 9px;
+    color: #397e79;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.admin-welcome h1 {
+    margin: 0 0 8px;
+    color: #172b2a;
+    font-size: 28px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.admin-welcome p {
+    margin: 0;
+    color: #657875;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* SECTION HEADINGS */
+
+.admin-section {
+    margin-top: 30px;
+}
+
+.admin-section-heading {
+    margin-bottom: 17px;
+}
+
+.admin-section-heading h2 {
+    margin: 0 0 6px;
+    color: #172b2a;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.admin-section-heading p {
+    margin: 0;
+    color: #718582;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* STATISTICS */
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.admin-stat-card {
+    min-width: 0;
+    padding: 21px;
+    background: #ffffff;
+    border: 1px solid #e1ece9;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(34, 76, 70, 0.04);
+}
+
+.admin-stat-label {
+    margin-bottom: 12px;
+    color: #718582;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.admin-stat-value {
+    color: #172b2a;
+    font-size: 27px;
+    font-weight: 750;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.admin-stat-note {
+    margin-top: 7px;
+    color: #718582;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* DASHBOARD MENU */
+
+.admin-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admin-menu-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 21px;
+    background: #ffffff;
+    border: 1px solid #e1ece9;
+    border-radius: 14px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(34, 76, 70, 0.04);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-menu-card:hover {
+    transform: translateY(-3px);
+    border-color: #a8d5cf;
+    box-shadow: 0 8px 22px rgba(34, 76, 70, 0.09);
+}
+
+.admin-menu-card:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+.admin-menu-card h3 {
+    margin: 0 0 8px;
+    color: #172b2a;
+    font-size: 16px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.admin-menu-card p {
+    margin: 0;
+    color: #718582;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.admin-card-link {
+    display: inline-block;
+    margin-top: auto;
+    padding-top: 15px;
+    color: #397e79;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.admin-menu-card-danger {
+    border-left: 4px solid #bd5757;
+}
+
+.admin-menu-card-danger .admin-card-link {
+    color: #a84747;
+}
+
+.admin-menu-card-highlight {
+    border-left: 4px solid #4f9d96;
+}
+
+/* FOOTER */
+
+.admin-dashboard-footer {
+    margin-top: 28px;
+    padding: 17px 20px;
+    border: 1px solid #e1ece9;
+    border-radius: 12px;
+    background: #f7fbfa;
+    color: #718582;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* TABLET */
+
+@media (max-width: 950px) {
+    .admin-dashboard {
+        padding: 24px 18px 40px;
+    }
+
+    .admin-stats-grid,
+    .admin-menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-stat-card,
+    .admin-menu-card {
+        padding: 19px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .admin-dashboard {
+        padding: 20px 14px 35px;
+    }
+
+    .admin-welcome {
+        padding: 21px;
+        margin-bottom: 23px;
+    }
+
+    .admin-welcome h1 {
+        font-size: 23px;
+    }
+
+    .admin-welcome p {
+        font-size: 13px;
+    }
+
+    .admin-section {
+        margin-top: 25px;
+    }
+
+    .admin-section-heading h2 {
+        font-size: 18px;
+    }
+
+    .admin-stats-grid,
+    .admin-menu-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    .admin-stat-card,
+    .admin-menu-card {
+        padding: 18px;
+    }
+
+    .admin-stat-value {
+        font-size: 25px;
+    }
+
+    .admin-dashboard-footer {
+        padding: 15px;
+        font-size: 11px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+    .admin-dashboard {
+        padding-right: 11px;
+        padding-left: 11px;
+    }
+
+    .admin-welcome {
+        padding: 17px;
+    }
+
+    .admin-welcome h1 {
+        font-size: 21px;
+    }
+
+    .admin-stat-card,
+    .admin-menu-card {
+        padding: 16px;
+    }
+
+    .admin-stat-value {
+        font-size: 23px;
+    }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-menu-card {
+        transition: none;
+    }
+
+    .admin-menu-card:hover {
+        transform: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+
+    <!-- WELCOME SECTION -->
+    <section class="admin-welcome">
+        <div class="admin-welcome-content">
+            <div class="admin-welcome-label">
+                AquaTrack Administration
+            </div>
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Manage your fish inventory, monitor stock movements,
+                and review your store activities.
+            </p>
+        </div>
+    </section>
+
+    <!-- DASHBOARD STATISTICS -->
+    <section
+        class="admin-stats-grid"
+        aria-label="Dashboard statistics"
+    >
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Total Fish Products</div>
+            <div class="admin-stat-value">
+                {{ total_products|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Registered fish products
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Available Products</div>
+            <div class="admin-stat-value">
+                {{ available_products|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Products currently available
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Low Stock Products</div>
+            <div class="admin-stat-value">
+                {{ low_stock|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Products needing restocking
+            </div>
+            <a href="{{ url_for('admin.low_stock') }}">Review stock alerts</a>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Out of Stock</div>
+            <div class="admin-stat-value">
+                {{ out_of_stock|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Products with zero stock
+            </div>
+            <a href="{{ url_for('admin.low_stock') }}">Review stock alerts</a>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Over Stock</div>
+            <div class="admin-stat-value">
+                {{ over_stock|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Products above their configured maximum
+            </div>
+            <a href="{{ url_for('admin.stock_monitoring') }}">Review stock</a>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Total Sales</div>
+            <div class="admin-stat-value">
+                {{ total_sales|default(0) }}
+            </div>
+            <div class="admin-stat-note">
+                Recorded sales orders
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-label">Verified Income</div>
+            <div class="admin-stat-value">
+                ₱{{ "{:,.2f}".format(total_income|default(0)|float) }}
+            </div>
+            <div class="admin-stat-note">
+                Income from verified payments
+            </div>
+        </div>
+    </section>
+
+    <!-- INVENTORY MANAGEMENT -->
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <h2>Inventory Management</h2>
+            <p>
+                Manage fish products, stock quantities,
+                and daily availability.
+            </p>
+        </div>
+
+        <div class="admin-menu-grid">
+            <a
+                href="{{ url_for('admin.products') }}"
+                class="admin-menu-card"
+            >
+                <h3>Product Management</h3>
+                <p>
+                    Add, edit, and manage registered fish products.
+                </p>
+                <span class="admin-card-link">Manage Products →</span>
+            </a>
+
+            <a
+                href="{{ url_for('admin.daily_catalog') }}"
+                class="admin-menu-card"
+            >
+                <h3>Daily Fish Catalog</h3>
+                <p>
+                    Manage fish quantities available for customers.
+                </p>
+                <span class="admin-card-link">Manage Catalog →</span>
+            </a>
+
+            <a
+                href="{{ url_for('inventory.stock_in') }}"
+                class="admin-menu-card admin-menu-card-highlight"
+            >
+                <h3>Stock In</h3>
+                <p>Record newly added fish inventory.</p>
+                <span class="admin-card-link">Add Stock →</span>
+            </a>
+
+            <a
+                href="{{ url_for('inventory.stock_out') }}"
+                class="admin-menu-card"
+            >
+                <h3>Stock Out</h3>
+                <p>
+                    Record general reductions in fish inventory.
+                </p>
+                <span class="admin-card-link">Record Stock Out →</span>
+            </a>
+
+            <a
+                href="{{ url_for('inventory.inventory_loss') }}"
+                class="admin-menu-card admin-menu-card-danger"
+            >
+                <h3>Inventory Loss</h3>
+                <p>
+                    Record damaged, missing, or lost fish inventory.
+                </p>
+                <span class="admin-card-link">
+                    Record Inventory Loss →
+                </span>
+            </a>
+
+            <a
+                href="{{ url_for('admin.stock_monitoring') }}"
+                class="admin-menu-card"
+            >
+                <h3>Stock Monitoring</h3>
+                <p>
+                    Monitor current inventory and recent stock movements.
+                </p>
+                <span class="admin-card-link">Monitor Stock →</span>
+            </a>
+
+            <a
+                href="{{ url_for('admin.stock_history') }}"
+                class="admin-menu-card"
+            >
+                <h3>Stock History</h3>
+                <p>
+                    Review recorded stock-in and stock-out transactions.
+                </p>
+                <span class="admin-card-link">View Stock History →</span>
+            </a>
+
+            <a
+                href="{{ url_for('admin.inventory_reconciliation') }}"
+                class="admin-menu-card"
+            >
+                <h3>Inventory Reconciliation</h3>
+                <p>
+                    Find differences between current stock and the latest
+                    recorded stock movement.
+                </p>
+                <span class="admin-card-link">Check Reconciliation →</span>
+            </a>
+
+            <a
+                href="{{ url_for('admin.low_stock') }}"
+                class="admin-menu-card"
+            >
+                <h3>Low Stock Alert</h3>
+                <p>
+                    Check fish products that need restocking.
+                </p>
+                <span class="admin-card-link">View Low Stock →</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ANALYTICS AND REPORTS -->
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <h2>Analytics and Reports</h2>
+            <p>
+                Review inventory performance and business records.
+            </p>
+        </div>
+
+        <div class="admin-menu-grid">
+            <a
+                href="{{ url_for('analytics.dashboard') }}"
+                class="admin-menu-card"
+            >
+                <h3>Analytics Dashboard</h3>
+                <p>
+                    View inventory trends and business analysis.
+                </p>
+                <span class="admin-card-link">View Analytics →</span>
+            </a>
+
+            <a
+                href="{{ url_for('reports.inventory_report') }}"
+                class="admin-menu-card"
+            >
+                <h3>Inventory Report</h3>
+                <p>
+                    Review current fish inventory records.
+                </p>
+                <span class="admin-card-link">View Report →</span>
+            </a>
+
+            <a
+                href="{{ url_for('reports.sales_report') }}"
+                class="admin-menu-card"
+            >
+                <h3>Sales Report</h3>
+                <p>
+                    Review recorded sales and verified income.
+                </p>
+                <span class="admin-card-link">View Report →</span>
+            </a>
+
+            <a
+                href="{{ url_for('reports.losses_report') }}"
+                class="admin-menu-card admin-menu-card-danger"
+            >
+                <h3>Inventory Loss Report</h3>
+                <p>
+                    Review previously recorded inventory losses.
+                </p>
+                <span class="admin-card-link">View Loss Records →</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="admin-dashboard-footer">
+        AquaTrack Stock Monitoring System · JRJ PETSHOP
+    </footer>
+
+</div>
+{% endblock %}

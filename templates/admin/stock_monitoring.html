@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Monitoring | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.stock-monitoring {
+    width: 100%;
+    min-width: 0;
+    color: #172b28;
+}
+
+.stock-monitoring .page-header h1,
+.stock-monitoring .section-heading h2 {
+    color: #172b28;
+}
+
+.stock-monitoring .page-header p,
+.stock-monitoring .section-heading p {
+    color: #64736f;
+    line-height: 1.6;
+}
+
+.stock-monitoring .monitoring-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stock-monitoring .monitoring-section {
+    margin-top: 24px;
+}
+
+.stock-monitoring .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.stock-monitoring .data-table {
+    width: 100%;
+    min-width: 850px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.stock-monitoring .data-table th,
+.stock-monitoring .data-table td {
+    padding: 11px 8px;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    vertical-align: middle;
+}
+
+.stock-monitoring .data-table th {
+    color: #263b36;
+    white-space: normal;
+}
+
+.stock-monitoring .data-table td {
+    color: #273b36;
+}
+
+.stock-monitoring .status-badge,
+.stock-monitoring .movement-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.stock-monitoring .status-available,
+.stock-monitoring .movement-in {
+    background: #e4f5eb;
+    color: #207044;
+}
+
+.stock-monitoring .status-low {
+    background: #fff2d8;
+    color: #986000;
+}
+
+.stock-monitoring .status-out,
+.stock-monitoring .movement-out {
+    background: #fde8e8;
+    color: #b42323;
+}
+
+.stock-monitoring .status-over {
+    background: #eee8ff;
+    color: #6240a5;
+}
+
+.stock-monitoring .movement-other {
+    background: #edf1f0;
+    color: #52645f;
+}
+
+.stock-monitoring .quantity-cell {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-monitoring .section-heading {
+    margin-bottom: 18px;
+}
+
+.stock-monitoring .record-count {
+    color: #64736f;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.stock-monitoring .code-text {
+    color: #126b70;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.stock-monitoring .product-code {
+    display: block;
+    margin-top: 4px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.stock-monitoring .empty-state {
+    padding: 30px 15px;
+    text-align: center;
+}
+
+.stock-monitoring .empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.stock-monitoring .empty-state p {
+    color: #64736f;
+    margin-bottom: 16px;
+}
+
+.stock-monitoring .page-footer {
+    margin-top: 24px;
+}
+
+.stock-monitoring .page-footer a {
+    text-decoration: none;
+}
+
+.stock-monitoring .page-footer a:hover {
+    text-decoration: underline;
+}
+
+.stock-monitoring a:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .stock-monitoring .data-table th,
+    .stock-monitoring .data-table td {
+        padding: 9px 6px;
+        font-size: 13px;
+    }
+
+    .stock-monitoring .status-badge,
+    .stock-monitoring .movement-badge {
+        font-size: 11px;
+        padding: 5px 7px;
+    }
+}
+
+@media (max-width: 600px) {
+    .stock-monitoring .monitoring-section {
+        margin-top: 18px;
+    }
+
+    .stock-monitoring .monitoring-actions {
+        width: 100%;
+    }
+
+    .stock-monitoring .monitoring-actions .btn {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .stock-monitoring .page-footer .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 380px) {
+    .stock-monitoring .empty-state {
+        padding: 24px 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container stock-monitoring">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Stock Monitoring</h1>
+            <p>
+                Monitor stock levels, low/out-of-stock reminders, and products
+                above their configured maximum.
+            </p>
+        </div>
+
+        <div class="monitoring-actions">
+            <a href="{{ url_for('inventory.stock_in') }}" class="btn btn-primary">
+                Stock In
+            </a>
+
+            <a href="{{ url_for('inventory.stock_out') }}" class="btn btn-secondary">
+                Stock Out
+            </a>
+
+            <a href="{{ url_for('inventory.inventory_loss') }}" class="btn btn-secondary">
+                Inventory Loss
+            </a>
+        </div>
+    </div>
+
+    <!-- CURRENT INVENTORY -->
+    <div class="content-section monitoring-section">
+
+        <div class="section-heading">
+            <h2>Current Fish Inventory</h2>
+
+            <p>
+                Overview of registered fish products and their current stock levels.
+            </p>
+
+            <div class="record-count">
+                {{ products|length }} registered product(s)
+            </div>
+        </div>
+
+        {% if products %}
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width: 15%;">
+                        <col style="width: 20%;">
+                        <col style="width: 13%;">
+                        <col style="width: 13%;">
+                        <col style="width: 13%;">
+                        <col style="width: 13%;">
+                        <col style="width: 13%;">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <th>Product Code</th>
+                            <th>Fish Product</th>
+                            <th>Category</th>
+                            <th>Current Stock</th>
+                            <th>Minimum Stock</th>
+                            <th>Maximum Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    <span class="code-text">
+                                        {{ product.product_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>{{ product.product_name }}</strong>
+                                </td>
+
+                                <td>{{ product.category or "—" }}</td>
+
+                                <td class="quantity-cell">
+                                    {{ product.quantity }}
+                                </td>
+
+                                <td class="quantity-cell">
+                                    {{ product.min_stock }}
+                                </td>
+
+                                <td class="quantity-cell">
+                                    {{ product.max_stock if product.max_stock is not none else "—" }}
+                                </td>
+
+                                <td>
+                                    {% if product.quantity|int <= 0 %}
+                                        <span class="status-badge status-out">
+                                            Out of Stock
+                                        </span>
+                                    {% elif product.quantity|int <= product.min_stock|int %}
+                                        <span class="status-badge status-low">
+                                            Low Stock
+                                        </span>
+                                    {% elif product.max_stock is not none and product.quantity|int > product.max_stock|int %}
+                                        <span class="status-badge status-over">
+                                            Over Stock
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-available">
+                                            Available
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Fish Products Found</h3>
+
+                <p>
+                    Registered fish products will appear here.
+                </p>
+
+                <a href="{{ url_for('admin.products') }}" class="btn btn-primary">
+                    View Products
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- RECENT STOCK MOVEMENTS -->
+    <div class="content-section monitoring-section">
+
+        <div class="section-heading">
+            <h2>Recent Stock Movements</h2>
+
+            <p>
+                Latest recorded stock additions and reductions.
+            </p>
+        </div>
+
+        {% if history %}
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width: 15%;">
+                        <col style="width: 17%;">
+                        <col style="width: 12%;">
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 9%;">
+                        <col style="width: 13%;">
+                        <col style="width: 14%;">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <th>Stock Code</th>
+                            <th>Product Name</th>
+                            <th>Change Type</th>
+                            <th>Previous Quantity</th>
+                            <th>Changed Quantity</th>
+                            <th>New Quantity</th>
+                            <th>Reason</th>
+                            <th>Date and Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in history %}
+                            <tr>
+                                <td>
+                                    <span class="code-text">
+                                        {{ record.stock_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>{{ record.product_name }}</strong>
+                                    <span class="product-code">
+                                        Product Code:
+                                        {{ record.product_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if record.change_type == "Stock In" %}
+                                        <span class="movement-badge movement-in">
+                                            Stock In
+                                        </span>
+                                    {% elif record.change_type == "Stock Out" %}
+                                        <span class="movement-badge movement-out">
+                                            Stock Out
+                                        </span>
+                                    {% else %}
+                                        <span class="movement-badge movement-other">
+                                            {{ record.change_type }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="quantity-cell">
+                                    {{ record.previous_quantity }}
+                                </td>
+
+                                <td class="quantity-cell">
+                                    {{ record.changed_quantity }}
+                                </td>
+
+                                <td class="quantity-cell">
+                                    {{ record.new_quantity }}
+                                </td>
+
+                                <td>
+                                    {{ record.reason or "No reason provided" }}
+                                </td>
+
+                                <td>
+                                    {% if record.created_at %}
+                                        {{ record.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Stock History Yet</h3>
+
+                <p>
+                    Recorded inventory movements will appear here.
+                </p>
+            </div>
+
+        {% endif %}
+
+        <div class="page-footer">
+            <a href="{{ url_for('admin.stock_history') }}" class="btn btn-secondary">
+                View Complete Stock History
+            </a>
+        </div>
+
+    </div>
+
+    <!-- BACK TO DASHBOARD -->
+    <div class="page-footer">
+        <a href="{{ url_for('admin.dashboard') }}">
+            Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

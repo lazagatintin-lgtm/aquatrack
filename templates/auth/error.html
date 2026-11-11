@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Login Error | AquaTrack{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h1>Login Failed</h1>
+            <p>We couldn't log you in using the provided credentials.</p>
+        </div>
+
+        <div class="card">
+            <div class="empty-state">
+
+                <h2>Incorrect Email or Password</h2>
+
+                <p>
+                    Please check your email and password, then try again.
+                </p>
+
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+                    Back to Login
+                </a>
+
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

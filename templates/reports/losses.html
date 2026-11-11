@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Losses Report | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.losses-report {
+    width: 100%;
+    min-width: 0;
+}
+
+.losses-report .report-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.losses-report .losses-table-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.losses-report table {
+    width: 100%;
+    min-width: 950px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.losses-report th,
+.losses-report td {
+    padding: 12px 9px;
+    text-align: left;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.losses-report th {
+    font-size: 13px;
+}
+
+.losses-report td {
+    font-size: 13px;
+}
+
+.losses-report th:nth-child(1),
+.losses-report td:nth-child(1) {
+    width: 15%;
+}
+
+.losses-report th:nth-child(2),
+.losses-report td:nth-child(2) {
+    width: 20%;
+}
+
+.losses-report th:nth-child(3),
+.losses-report td:nth-child(3) {
+    width: 15%;
+}
+
+.losses-report th:nth-child(4),
+.losses-report td:nth-child(4) {
+    width: 10%;
+}
+
+.losses-report th:nth-child(5),
+.losses-report td:nth-child(5) {
+    width: 15%;
+}
+
+.losses-report th:nth-child(6),
+.losses-report td:nth-child(6) {
+    width: 13%;
+}
+
+.losses-report th:nth-child(7),
+.losses-report td:nth-child(7) {
+    width: 12%;
+}
+
+.losses-report .empty-state {
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.losses-report .empty-state p {
+    margin: 6px 0 0;
+}
+
+@media (max-width: 900px) {
+    .losses-report th,
+    .losses-report td {
+        padding: 10px 6px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 600px) {
+    .losses-report .report-header-actions {
+        width: 100%;
+    }
+
+    .losses-report .report-header-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .losses-report th,
+    .losses-report td {
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    .losses-report th {
+        line-height: 1.3;
+    }
+
+    .losses-report .empty-state {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .losses-report th,
+    .losses-report td {
+        padding: 7px 4px;
+        font-size: 9px;
+    }
+
+    .losses-report .empty-state {
+        font-size: 9px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container losses-report">
+
+    <section class="page-header">
+        <div>
+            <h1>Inventory Losses Report</h1>
+            <p>View and review recorded fish inventory losses.</p>
+        </div>
+
+        <div class="report-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </section>
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Loss Records</h2>
+            <p>List of fish recorded as lost or damaged.</p>
+        </div>
+
+        <div class="table-container losses-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loss Code</th>
+                        <th>Product Name</th>
+                        <th>Product Code</th>
+                        <th>Quantity Lost</th>
+                        <th>Reason</th>
+                        <th>Loss Date</th>
+                        <th>Recorded At</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for loss in losses %}
+                    <tr>
+                        <td>{{ loss.loss_code or "N/A" }}</td>
+
+                        <td>
+                            {{ loss.product_name or "Unknown Product" }}
+                        </td>
+
+                        <td>{{ loss.product_code or "N/A" }}</td>
+
+                        <td>{{ loss.quantity }}</td>
+
+                        <td>{{ loss.reason }}</td>
+
+                        <td>
+                            {{ loss.loss_date.strftime('%b %d, %Y') if loss.loss_date else "N/A" }}
+                        </td>
+
+                        <td>
+                            {{ loss.recorded_at.strftime('%b %d, %Y %I:%M %p') if loss.recorded_at else "N/A" }}
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No Inventory Losses Recorded
+                            <p>Recorded inventory losses will appear here.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

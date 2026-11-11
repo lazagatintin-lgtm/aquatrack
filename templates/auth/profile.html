@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-page {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 32px 16px;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 560px;
+    padding: 32px;
+    border: 1px solid #e1eeee;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(28, 83, 88, 0.08);
+}
+
+.profile-card h1 {
+    margin: 0;
+    color: #126b70;
+    font-size: 26px;
+}
+
+.profile-card .profile-intro {
+    margin: 8px 0 24px;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.profile-photo {
+    width: 104px;
+    height: 104px;
+    margin: 0 0 20px;
+    overflow: hidden;
+    border: 1px solid #d8e6e6;
+    border-radius: 50%;
+    background: #e6f5f3;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-photo-fallback {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    color: #126b70;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.profile-card .form-group {
+    margin-bottom: 16px;
+}
+
+.profile-card label {
+    display: block;
+    margin-bottom: 7px;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile-card input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid #d8e6e6;
+    border-radius: 7px;
+    background: #fbfdfd;
+    color: #24434a;
+}
+
+.profile-card input[type="file"] {
+    min-height: 0;
+    padding: 9px;
+}
+
+.profile-card .profile-role {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 0 20px;
+    border-radius: 20px;
+    background: #e6f5f3;
+    color: #126b70;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.profile-card .auth-submit {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 7px;
+    background: #16817e;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .profile-page {
+        padding: 24px 14px;
+    }
+
+    .profile-card {
+        padding: 25px 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-card">
+        <h1>My Profile</h1>
+        <p class="profile-intro">
+            Update your account details and profile photo. Confirm your current
+            password before saving changes.
+        </p>
+        <span class="profile-role">{{ profile_user.role }}</span>
+
+        <div class="profile-photo" aria-label="Profile photo">
+            {% if profile_user.profile_image_path %}
+                <img
+                    src="{{ url_for('static', filename=profile_user.profile_image_path) }}"
+                    alt="Profile photo for {{ profile_user.name }}"
+                >
+            {% else %}
+                <span class="profile-photo-fallback" aria-hidden="true">
+                    {{ profile_user.name[:1]|upper }}
+                </span>
+            {% endif %}
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.profile') }}"
+            enctype="multipart/form-data"
+            data-prevent-double-submit
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="profile-name">Full Name</label>
+                <input
+                    type="text"
+                    id="profile-name"
+                    name="name"
+                    value="{{ profile_user.name }}"
+                    maxlength="100"
+                    autocomplete="name"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="profile-email">Email Address</label>
+                <input
+                    type="email"
+                    id="profile-email"
+                    name="email"
+                    value="{{ profile_user.email }}"
+                    maxlength="100"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="profile-image">Profile Photo (optional)</label>
+                <input
+                    type="file"
+                    id="profile-image"
+                    name="profile_image"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+                <small>JPG, PNG, or WebP. Maximum file size: 2 MB.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="current-password">Current Password</label>
+                <input
+                    type="password"
+                    id="current-password"
+                    name="current_password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="new-password">New Password <span>(optional)</span></label>
+                <input
+                    type="password"
+                    id="new-password"
+                    name="new_password"
+                    minlength="8"
+                    autocomplete="new-password"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <input
+                    type="password"
+                    id="confirm-password"
+                    name="confirm_password"
+                    minlength="8"
+                    autocomplete="new-password"
+                >
+            </div>
+
+            <button type="submit" class="auth-submit">Save Profile</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

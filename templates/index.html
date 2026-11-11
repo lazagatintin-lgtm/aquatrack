@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome | AquaTrack JRJ PETSHOP{% endblock %}
+
+{% block content %}
+
+{% if not session.get('user_id') %}
+<section class="hero-section home-hero">
+
+    <div class="hero-content">
+        <div class="home-intro">
+            <p class="home-eyebrow">JRJ PETSHOP MANAGEMENT SYSTEM</p>
+            <h1>AquaTrack</h1>
+            <p class="home-description">
+                Manage fish inventory, stock movements, losses, and customer
+                orders in one place. Customers can browse available fish and
+                place orders; the owner can manage shop operations and reports.
+            </p>
+            <div class="home-actions" aria-label="Customer account actions">
+                <a class="btn btn-primary" href="{{ url_for('auth.register') }}">
+                    Create Customer Account
+                </a>
+                <a class="btn btn-outline" href="{{ url_for('auth.login') }}">
+                    Customer Login
+                </a>
+            </div>
+            <a class="home-owner-link" href="{{ url_for('auth.owner_login') }}">
+                Owner Login
+            </a>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+        <img
+            src="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+            alt=""
+            class="hero-logo"
+        >
+        </div>
+    </div>
+
+</section>
+
+<section class="home-audiences" aria-labelledby="home-audiences-title">
+    <div class="home-audiences-inner">
+        <h2 id="home-audiences-title">Built for customers and the shop owner</h2>
+        <div class="home-audience-grid">
+            <article class="home-audience">
+                <p class="home-audience-label">CUSTOMERS</p>
+                <h3>Find your next fish</h3>
+                <p>Browse the daily catalog, place orders, and review payment history.</p>
+            </article>
+            <article class="home-audience">
+                <p class="home-audience-label">SHOP OWNER</p>
+                <h3>Keep the shop moving</h3>
+                <p>Manage products, stock changes, inventory losses, sales, and reports.</p>
+            </article>
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="hero-section">
+    <div class="hero-content">
+        <div>
+            <h1>Welcome to AquaTrack!</h1>
+            <p>Access your account and continue to your dashboard.</p>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+            <img
+                src="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+                alt=""
+                class="hero-logo"
+            >
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

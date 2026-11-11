@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Verification | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.payment-verification {
+    width: 100%;
+    max-width: 1400px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.payment-verification .page-heading {
+    margin-bottom: 24px;
+}
+
+.payment-verification .page-heading h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification .page-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.payment-verification .payment-panel {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.payment-verification .desktop-payment-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.payment-verification .payment-table {
+    width: 100%;
+    min-width: 1150px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.payment-verification .payment-table th {
+    padding: 12px 9px;
+    background: #eff8f7;
+    color: #35656a;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification .payment-table td {
+    padding: 12px 9px;
+    border-bottom: 1px solid #edf2f2;
+    color: #526b70;
+    font-size: 12px;
+    line-height: 1.5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.payment-verification .payment-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.payment-verification .payment-table tbody tr:hover {
+    background: #f8fbfb;
+}
+
+.payment-verification .payment-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification .badge-success {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.payment-verification .badge-danger {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.payment-verification .badge-warning {
+    background: #fff3d9;
+    color: #94600a;
+}
+
+.payment-verification .badge-info {
+    background: #e3f2fa;
+    color: #24729b;
+}
+
+.payment-verification .badge-secondary {
+    background: #edf1f2;
+    color: #526663;
+}
+
+.payment-verification .proof-link {
+    color: #147b80;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.payment-verification .proof-link:hover {
+    color: #105e62;
+    text-decoration: underline;
+}
+
+.payment-verification .payment-actions {
+    min-width: 0;
+}
+
+.payment-verification .payment-actions form {
+    min-width: 0;
+}
+
+.payment-verification .cash-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 9px;
+    color: #526b70;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.payment-verification .cash-check input {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    accent-color: #147b80;
+}
+
+.payment-verification .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.payment-verification .action-button {
+    min-height: 32px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.payment-verification .verify-button {
+    background: #218452;
+    color: #ffffff;
+}
+
+.payment-verification .verify-button:hover {
+    background: #176b41;
+}
+
+.payment-verification .reject-button {
+    background: #bd4545;
+    color: #ffffff;
+}
+
+.payment-verification .reject-button:hover {
+    background: #9f3434;
+}
+
+.payment-verification .no-action {
+    color: #89999d;
+    font-size: 11px;
+}
+
+.payment-verification .empty-state {
+    padding: 30px 20px;
+    background: #f2f9fb;
+    border: 1px solid #dcebef;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.payment-verification .empty-state h2 {
+    margin: 0 0 8px;
+    color: #20545a;
+    font-size: 18px;
+}
+
+.payment-verification .empty-state p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.payment-verification .mobile-payment-list {
+    display: none;
+}
+
+.payment-verification .payment-card {
+    min-width: 0;
+    padding: 16px;
+    border-bottom: 1px solid #edf2f2;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification .payment-card:last-child {
+    border-bottom: none;
+}
+
+.payment-verification .payment-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.payment-verification .payment-card-header strong {
+    color: #126b70;
+    font-size: 14px;
+}
+
+.payment-verification .payment-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.payment-verification .payment-detail {
+    min-width: 0;
+}
+
+.payment-verification .payment-detail span {
+    display: block;
+    margin-bottom: 3px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.payment-verification .payment-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.payment-verification .payment-card-actions {
+    padding-top: 12px;
+    border-top: 1px solid #edf2f2;
+}
+
+.payment-verification .payment-card-actions .action-buttons {
+    margin-top: 9px;
+}
+
+@media (max-width: 1000px) {
+    .payment-verification {
+        padding: 20px;
+    }
+
+    .payment-verification .desktop-payment-table {
+        display: none;
+    }
+
+    .payment-verification .mobile-payment-list {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .payment-verification {
+        padding: 15px;
+    }
+
+    .payment-verification .page-heading h1 {
+        font-size: 23px;
+    }
+
+    .payment-verification .page-heading p {
+        font-size: 13px;
+    }
+
+    .payment-verification .payment-card {
+        padding: 14px;
+    }
+
+    .payment-verification .payment-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .payment-verification .action-buttons {
+        flex-direction: column;
+    }
+
+    .payment-verification .action-button {
+        width: 100%;
+        min-height: 38px;
+    }
+}
+
+@media (max-width: 380px) {
+    .payment-verification {
+        padding: 12px;
+    }
+
+    .payment-verification .payment-card {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-verification">
+
+    <section class="page-heading">
+        <h1>Payment Verification</h1>
+        <p>
+            Review customer payments and verify submitted transactions.
+        </p>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div
+                    class="alert alert-{{ 'danger' if category == 'error' else category }}"
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if payments %}
+
+        <section class="payment-panel">
+
+            <!-- DESKTOP TABLE -->
+            <div class="desktop-payment-table">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Payment Code</th>
+                            <th>Order Number</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Reference Number</th>
+                            <th>Payment Date</th>
+                            <th>Proof</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.payment_code or "N/A" }}</td>
+                            <td>{{ payment.order_code or "N/A" }}</td>
+                            <td>{{ payment.customer_name }}</td>
+
+                            <td>
+                                ₱{{ "%.2f"|format(payment.amount|float) }}
+                            </td>
+
+                            <td>{{ payment.payment_method }}</td>
+
+                            <td>{{ payment.reference_number or "N/A" }}</td>
+
+                            <td>
+                                {% if payment.payment_date %}
+                                    {{ payment.payment_date.strftime("%Y-%m-%d %I:%M %p") }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if payment.payment_method in ["GCash", "Maya", "Online Banking"] and payment.proof_image %}
+                                    <a
+                                        class="proof-link"
+                                        href="{{ url_for('admin.view_payment_proof', payment_id=payment.id) }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View Proof
+                                    </a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if payment.payment_status == "Verified" %}
+                                    <span class="payment-badge badge-success">Verified</span>
+                                {% elif payment.payment_status == "Rejected" %}
+                                    <span class="payment-badge badge-danger">Rejected</span>
+                                {% elif payment.payment_status == "Pending" %}
+                                    <span class="payment-badge badge-warning">Pending</span>
+                                {% else %}
+                                    <span class="payment-badge badge-secondary">
+                                        {{ payment.payment_status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if payment.order_status == "Cancelled" %}
+                                    <span class="payment-badge badge-secondary">Cancelled</span>
+                                {% elif payment.order_status == "Paid" %}
+                                    <span class="payment-badge badge-success">Paid</span>
+                                {% elif payment.order_status == "Partially Paid" %}
+                                    <span class="payment-badge badge-info">Partially Paid</span>
+                                {% elif payment.order_status == "Payment Pending" %}
+                                    <span class="payment-badge badge-warning">Payment Pending</span>
+                                {% else %}
+                                    <span class="payment-badge badge-secondary">
+                                        {{ payment.order_status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="payment-actions">
+                                {% if payment.order_status == "Cancelled" %}
+                                    <span class="no-action">No action available</span>
+
+                                {% elif payment.payment_status == "Pending" %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('admin.update_payment_status', payment_id=payment.id) }}"
+                                        data-prevent-double-submit
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="{{ csrf_token() }}"
+                                        >
+
+                                        {% if payment.payment_method == "Cash on Pickup" %}
+                                            <label class="cash-check">
+                                                <input
+                                                    type="checkbox"
+                                                    name="cash_received"
+                                                    value="yes"
+                                                    id="cash_received_{{ payment.id }}"
+                                                >
+                                                <span>Cash received</span>
+                                            </label>
+                                        {% endif %}
+
+                                        <div class="action-buttons">
+                                            <button
+                                                type="submit"
+                                                name="action"
+                                                value="verify"
+                                                class="action-button verify-button"
+                                                onclick="return confirm('Are you sure you want to verify this payment?');"
+                                            >
+                                                Verify
+                                            </button>
+
+                                            <button
+                                                type="submit"
+                                                name="action"
+                                                value="reject"
+                                                class="action-button reject-button"
+                                                onclick="return confirm('Are you sure you want to reject this payment?');"
+                                            >
+                                                Reject
+                                            </button>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <span class="no-action">No action needed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MOBILE PAYMENT CARDS -->
+            <div class="mobile-payment-list">
+                {% for payment in payments %}
+                <article class="payment-card">
+
+                    <div class="payment-card-header">
+                        <strong>
+                            Payment {{ payment.payment_code or "N/A" }}
+                            · Order {{ payment.order_code or "N/A" }}
+                        </strong>
+
+                        {% if payment.payment_status == "Verified" %}
+                            <span class="payment-badge badge-success">Verified</span>
+                        {% elif payment.payment_status == "Rejected" %}
+                            <span class="payment-badge badge-danger">Rejected</span>
+                        {% elif payment.payment_status == "Pending" %}
+                            <span class="payment-badge badge-warning">Pending</span>
+                        {% else %}
+                            <span class="payment-badge badge-secondary">
+                                {{ payment.payment_status }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="payment-details">
+                        <div class="payment-detail">
+                            <span>Customer</span>
+                            <strong>{{ payment.customer_name }}</strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Amount</span>
+                            <strong>₱{{ "%.2f"|format(payment.amount|float) }}</strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Payment Method</span>
+                            <strong>{{ payment.payment_method }}</strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Reference Number</span>
+                            <strong>{{ payment.reference_number or "N/A" }}</strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Payment Date</span>
+                            <strong>
+                                {% if payment.payment_date %}
+                                    {{ payment.payment_date.strftime("%Y-%m-%d %I:%M %p") }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Order Status</span>
+                            <strong>{{ payment.order_status }}</strong>
+                        </div>
+
+                        <div class="payment-detail">
+                            <span>Payment Proof</span>
+                            <strong>
+                                {% if payment.payment_method in ["GCash", "Maya", "Online Banking"] and payment.proof_image %}
+                                    <a
+                                        class="proof-link"
+                                        href="{{ url_for('admin.view_payment_proof', payment_id=payment.id) }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View Proof
+                                    </a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="payment-card-actions">
+                        {% if payment.order_status == "Cancelled" %}
+                            <span class="no-action">No action available</span>
+
+                        {% elif payment.payment_status == "Pending" %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('admin.update_payment_status', payment_id=payment.id) }}"
+                                data-prevent-double-submit
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
+                                {% if payment.payment_method == "Cash on Pickup" %}
+                                    <label class="cash-check">
+                                        <input
+                                            type="checkbox"
+                                            name="cash_received"
+                                            value="yes"
+                                            id="mobile_cash_received_{{ payment.id }}"
+                                        >
+                                        <span>Cash received</span>
+                                    </label>
+                                {% endif %}
+
+                                <div class="action-buttons">
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="verify"
+                                        class="action-button verify-button"
+                                        onclick="return confirm('Are you sure you want to verify this payment?');"
+                                    >
+                                        Verify Payment
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="reject"
+                                        class="action-button reject-button"
+                                        onclick="return confirm('Are you sure you want to reject this payment?');"
+                                    >
+                                        Reject Payment
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <span class="no-action">No action needed</span>
+                        {% endif %}
+                    </div>
+
+                </article>
+                {% endfor %}
+            </div>
+
+        </section>
+
+    {% else %}
+
+        <div class="empty-state">
+            <h2>No Payment Records Found</h2>
+            <p>
+                Customer payment submissions will appear here once transactions are recorded.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

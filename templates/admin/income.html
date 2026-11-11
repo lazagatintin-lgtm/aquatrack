@@ -1,0 +1,506 @@
+{% extends "base.html" %}
+
+{% block title %}Income Records | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.income-page {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.income-page .page-header {
+    margin-bottom: 24px;
+}
+
+.income-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.income-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.income-page .content-section {
+    width: 100%;
+    min-width: 0;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.income-page .section-heading {
+    margin-bottom: 18px;
+}
+
+.income-page .section-heading h2 {
+    margin: 0 0 6px;
+    color: #20545a;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.income-page .section-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.income-page .income-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.income-page .income-table th {
+    padding: 13px 10px;
+    background: #eff8f7;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.income-page .income-table td {
+    padding: 13px 10px;
+    border-bottom: 1px solid #edf2f2;
+    color: #526b70;
+    font-size: 13px;
+    line-height: 1.5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.income-page .income-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.income-page .income-table tbody tr:hover {
+    background: #f8fbfb;
+}
+
+.income-page .income-table th:nth-child(1),
+.income-page .income-table td:nth-child(1) {
+    width: 12%;
+}
+
+.income-page .income-table th:nth-child(2),
+.income-page .income-table td:nth-child(2) {
+    width: 13%;
+}
+
+.income-page .income-table th:nth-child(3),
+.income-page .income-table td:nth-child(3) {
+    width: 22%;
+}
+
+.income-page .income-table th:nth-child(4),
+.income-page .income-table td:nth-child(4) {
+    width: 17%;
+}
+
+.income-page .income-table th:nth-child(5),
+.income-page .income-table td:nth-child(5) {
+    width: 18%;
+}
+
+.income-page .income-table th:nth-child(6),
+.income-page .income-table td:nth-child(6) {
+    width: 18%;
+}
+
+.income-page .income-status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.income-page .status-paid {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.income-page .status-cancelled {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.income-page .status-pending {
+    background: #fff3d9;
+    color: #94600a;
+}
+
+.income-page .status-partial {
+    background: #e3f2fa;
+    color: #24729b;
+}
+
+.income-page .status-default {
+    background: #edf1f2;
+    color: #526663;
+}
+
+.income-page .desktop-income-table {
+    display: block;
+}
+
+.income-page .mobile-income-list {
+    display: none;
+}
+
+.income-page .income-card {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.income-page .income-card:first-child {
+    padding-top: 0;
+}
+
+.income-page .income-card:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.income-page .income-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 13px;
+}
+
+.income-page .income-card-header strong {
+    color: #126b70;
+    font-size: 14px;
+}
+
+.income-page .income-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.income-page .income-detail {
+    min-width: 0;
+}
+
+.income-page .income-detail span {
+    display: block;
+    margin-bottom: 4px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.income-page .income-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.income-page .verified-income {
+    color: #218452 !important;
+}
+
+.income-page .empty-state {
+    padding: 30px 20px;
+    background: #f2f9fb;
+    border: 1px solid #dcebef;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.income-page .empty-state h3 {
+    margin: 0 0 8px;
+    color: #20545a;
+    font-size: 18px;
+}
+
+.income-page .empty-state p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.income-page .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.income-page .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 17px;
+    background: #6c7c80;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.income-page .back-button:hover {
+    background: #536267;
+    color: #ffffff;
+}
+
+@media (max-width: 850px) {
+    .income-page {
+        padding: 20px;
+    }
+
+    .income-page .content-section {
+        padding: 18px;
+    }
+
+    .income-page .desktop-income-table {
+        display: none;
+    }
+
+    .income-page .mobile-income-list {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .income-page {
+        padding: 15px;
+    }
+
+    .income-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .income-page .content-section {
+        padding: 15px;
+    }
+
+    .income-page .income-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .income-page .button-group {
+        flex-direction: column;
+    }
+
+    .income-page .back-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 380px) {
+    .income-page {
+        padding: 12px;
+    }
+
+    .income-page .content-section {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="income-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Income Records</h1>
+            <p>View customer orders and their verified payment records.</p>
+        </div>
+    </div>
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Sales and Income</h2>
+            <p>
+                Review order amounts and verified payments.
+                Only verified payments are counted as actual income.
+            </p>
+        </div>
+
+        {% if sales %}
+
+            <!-- DESKTOP TABLE -->
+            <div class="desktop-income-table">
+                <table class="income-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer ID</th>
+                            <th>Order Date</th>
+                            <th>Order Amount</th>
+                            <th>Verified Income</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>#{{ sale.id }}</td>
+                            <td>{{ sale.user_id }}</td>
+
+                            <td>
+                                {{ sale.order_date.strftime('%b %d, %Y %I:%M %p') if sale.order_date else "N/A" }}
+                            </td>
+
+                            <td>
+                                ₱{{ "%.2f"|format(sale.total_amount|float) }}
+                            </td>
+
+                            <td>
+                                ₱{{ "%.2f"|format(sale.verified_amount|float) }}
+                            </td>
+
+                            <td>
+                                {% if sale.status == "Paid" or sale.status == "Completed" %}
+                                    <span class="income-status status-paid">
+                                        {{ sale.status }}
+                                    </span>
+                                {% elif sale.status == "Cancelled" or sale.status == "Payment Rejected" %}
+                                    <span class="income-status status-cancelled">
+                                        {{ sale.status }}
+                                    </span>
+                                {% elif sale.status == "Partially Paid" %}
+                                    <span class="income-status status-partial">
+                                        {{ sale.status }}
+                                    </span>
+                                {% elif sale.status == "Pending" or sale.status == "Payment Pending" %}
+                                    <span class="income-status status-pending">
+                                        {{ sale.status }}
+                                    </span>
+                                {% else %}
+                                    <span class="income-status status-default">
+                                        {{ sale.status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MOBILE CARDS -->
+            <div class="mobile-income-list">
+                {% for sale in sales %}
+                <article class="income-card">
+
+                    <div class="income-card-header">
+                        <strong>Order #{{ sale.id }}</strong>
+
+                        {% if sale.status == "Paid" or sale.status == "Completed" %}
+                            <span class="income-status status-paid">
+                                {{ sale.status }}
+                            </span>
+                        {% elif sale.status == "Cancelled" or sale.status == "Payment Rejected" %}
+                            <span class="income-status status-cancelled">
+                                {{ sale.status }}
+                            </span>
+                        {% elif sale.status == "Partially Paid" %}
+                            <span class="income-status status-partial">
+                                {{ sale.status }}
+                            </span>
+                        {% elif sale.status == "Pending" or sale.status == "Payment Pending" %}
+                            <span class="income-status status-pending">
+                                {{ sale.status }}
+                            </span>
+                        {% else %}
+                            <span class="income-status status-default">
+                                {{ sale.status }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="income-details">
+                        <div class="income-detail">
+                            <span>Customer ID</span>
+                            <strong>{{ sale.user_id }}</strong>
+                        </div>
+
+                        <div class="income-detail">
+                            <span>Order Date</span>
+                            <strong>
+                                {{ sale.order_date.strftime('%b %d, %Y %I:%M %p') if sale.order_date else "N/A" }}
+                            </strong>
+                        </div>
+
+                        <div class="income-detail">
+                            <span>Order Amount</span>
+                            <strong>
+                                ₱{{ "%.2f"|format(sale.total_amount|float) }}
+                            </strong>
+                        </div>
+
+                        <div class="income-detail">
+                            <span>Verified Income</span>
+                            <strong class="verified-income">
+                                ₱{{ "%.2f"|format(sale.verified_amount|float) }}
+                            </strong>
+                        </div>
+                    </div>
+
+                </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Income Records Yet</h3>
+                <p>
+                    Customer orders will appear here once they are recorded.
+                </p>
+            </div>
+
+        {% endif %}
+
+        <div class="button-group">
+            <a
+                href="{{ url_for('admin.dashboard') }}"
+                class="back-button"
+            >
+                Back to Dashboard
+            </a>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

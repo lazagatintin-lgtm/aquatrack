@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+
+{% block title %}Payment History | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.payment-history-page {
+    width: 100%;
+    max-width: 1100px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.payment-history-page .page-header {
+    margin-bottom: 22px;
+}
+
+.payment-history-page .page-header h2 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 27px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.payment-history-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.payment-history-page .history-card {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.payment-history-page .payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.payment-history-page .payment-table th,
+.payment-history-page .payment-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #edf2f2;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.payment-history-page .payment-table th {
+    background: #eff8f7;
+    color: #35656a;
+    font-weight: 700;
+}
+
+.payment-history-page .payment-table td {
+    color: #526b70;
+    line-height: 1.5;
+}
+
+.payment-history-page .payment-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.payment-history-page .status-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #edf2f2;
+    color: #526b70;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.payment-history-page .status-success {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.payment-history-page .status-danger {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.payment-history-page .status-warning {
+    background: #fff3d9;
+    color: #a66b08;
+}
+
+.payment-history-page .mobile-payment-list {
+    display: none;
+}
+
+.payment-history-page .payment-card {
+    min-width: 0;
+    padding: 16px;
+    margin-bottom: 13px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.payment-history-page .payment-card:last-child {
+    margin-bottom: 0;
+}
+
+.payment-history-page .payment-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.payment-history-page .payment-card-header h3 {
+    margin: 0;
+    color: #126b70;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.payment-history-page .payment-card-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+}
+
+.payment-history-page .payment-detail {
+    min-width: 0;
+}
+
+.payment-history-page .payment-detail span {
+    display: block;
+    margin-bottom: 3px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.payment-history-page .payment-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.payment-history-page .empty-state {
+    padding: 35px 20px;
+    text-align: center;
+}
+
+.payment-history-page .empty-state h3 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 19px;
+}
+
+.payment-history-page .empty-state p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.payment-history-page .back-button {
+    display: inline-block;
+    max-width: 100%;
+    padding: 11px 18px;
+    margin-top: 18px;
+    box-sizing: border-box;
+    background: #16817e;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.payment-history-page .back-button:hover {
+    background: #106b69;
+}
+
+.payment-history-page .back-button:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .payment-history-page {
+        padding: 20px;
+    }
+
+    .payment-history-page .history-card {
+        padding: 15px;
+    }
+
+    .payment-history-page .payment-table th,
+    .payment-history-page .payment-table td {
+        padding: 10px 6px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 600px) {
+    .payment-history-page {
+        padding: 15px;
+    }
+
+    .payment-history-page .page-header h2 {
+        font-size: 23px;
+    }
+
+    .payment-history-page .page-header p {
+        font-size: 13px;
+    }
+
+    .payment-history-page .history-card {
+        padding: 14px;
+    }
+
+    .payment-history-page .desktop-payment-table {
+        display: none;
+    }
+
+    .payment-history-page .mobile-payment-list {
+        display: block;
+    }
+
+    .payment-history-page .back-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .payment-history-page {
+        padding: 12px;
+    }
+
+    .payment-history-page .history-card {
+        padding: 11px;
+    }
+
+    .payment-history-page .payment-card {
+        padding: 13px;
+    }
+
+    .payment-history-page .payment-card-header h3 {
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="payment-history-page">
+
+    <div class="page-header">
+        <h2>Payment History</h2>
+        <p>
+            View your submitted payments and their verification status.
+        </p>
+    </div>
+
+    <div class="history-card">
+
+        {% if payments %}
+
+            <!-- DESKTOP AND TABLET TABLE -->
+            <div class="desktop-payment-table">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Payment Code</th>
+                            <th>Order Number</th>
+                            <th>Payment Method</th>
+                            <th>Amount</th>
+                            <th>Reference Number</th>
+                            <th>Payment Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for payment in payments %}
+                            {% set status = payment.payment_status or "Unknown" %}
+
+                            <tr>
+                                <td>{{ payment.payment_code or "N/A" }}</td>
+                                <td>{{ payment.order_code or "N/A" }}</td>
+                                <td>{{ payment.payment_method }}</td>
+
+                                <td>
+                                    ₱{{ "%.2f"|format(payment.amount|float) }}
+                                </td>
+
+                                <td>
+                                    {{ payment.reference_number or "N/A" }}
+                                </td>
+
+                                <td>
+                                    {% if payment.payment_date %}
+                                        {{ payment.payment_date.strftime("%Y-%m-%d %I:%M %p") }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if status == "Verified" %}
+                                        <span class="status-badge status-success">
+                                            Verified
+                                        </span>
+                                    {% elif status == "Rejected" %}
+                                        <span class="status-badge status-danger">
+                                            Rejected
+                                        </span>
+                                    {% elif status == "Pending" %}
+                                        <span class="status-badge status-warning">
+                                            Pending
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge">
+                                            {{ status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MOBILE PAYMENT CARDS -->
+            <div class="mobile-payment-list">
+                {% for payment in payments %}
+                    {% set status = payment.payment_status or "Unknown" %}
+
+                    <article class="payment-card">
+
+                        <div class="payment-card-header">
+                            <h3>
+                                Payment {{ payment.payment_code or "N/A" }}
+                            </h3>
+
+                            {% if status == "Verified" %}
+                                <span class="status-badge status-success">
+                                    Verified
+                                </span>
+                            {% elif status == "Rejected" %}
+                                <span class="status-badge status-danger">
+                                    Rejected
+                                </span>
+                            {% elif status == "Pending" %}
+                                <span class="status-badge status-warning">
+                                    Pending
+                                </span>
+                            {% else %}
+                                <span class="status-badge">
+                                    {{ status }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="payment-card-details">
+
+                            <div class="payment-detail">
+                                <span>Order Number</span>
+                                <strong>
+                                    {{ payment.order_code or "N/A" }}
+                                </strong>
+                            </div>
+
+                            <div class="payment-detail">
+                                <span>Payment Method</span>
+                                <strong>{{ payment.payment_method }}</strong>
+                            </div>
+
+                            <div class="payment-detail">
+                                <span>Amount</span>
+                                <strong>
+                                    ₱{{ "%.2f"|format(payment.amount|float) }}
+                                </strong>
+                            </div>
+
+                            <div class="payment-detail">
+                                <span>Reference Number</span>
+                                <strong>
+                                    {{ payment.reference_number or "N/A" }}
+                                </strong>
+                            </div>
+
+                            <div class="payment-detail">
+                                <span>Payment Date</span>
+                                <strong>
+                                    {% if payment.payment_date %}
+                                        {{ payment.payment_date.strftime("%Y-%m-%d %I:%M %p") }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Payment Records</h3>
+                <p>You do not have any payment records yet.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <a
+        href="{{ url_for('customer.my_orders') }}"
+        class="back-button"
+    >
+        Back to My Orders
+    </a>
+
+</section>
+{% endblock %}

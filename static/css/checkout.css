@@ -1,0 +1,315 @@
+.checkout-page {
+    width: 100%;
+    max-width: 950px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .page-header {
+    margin-bottom: 24px;
+}
+
+.checkout-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.checkout-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.checkout-page .flash-messages {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 20px;
+}
+
+.checkout-page .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border: 1px solid #c9ead8;
+}
+
+.checkout-page .message.error,
+.checkout-page .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border: 1px solid #f5d1d1;
+}
+
+.checkout-page .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border: 1px solid #f2e1b8;
+}
+
+.checkout-page .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border: 1px solid #d3e6f0;
+}
+
+.checkout-page .checkout-card,
+.checkout-page .pickup-card {
+    width: 100%;
+    min-width: 0;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.04);
+}
+
+.checkout-page .checkout-card h2,
+.checkout-page .pickup-card h2 {
+    margin: 0 0 17px;
+    color: #20545a;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.checkout-page .customer-info {
+    margin: 0;
+    color: #61777b;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.checkout-page .customer-info strong {
+    color: #35656a;
+}
+
+.checkout-page .checkout-item {
+    min-width: 0;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf2f2;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .checkout-item:first-child {
+    padding-top: 0;
+}
+
+.checkout-page .checkout-item:last-child {
+    border-bottom: none;
+}
+
+.checkout-page .checkout-item h3 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 16px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .checkout-item p {
+    margin: 6px 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.checkout-page .checkout-item strong {
+    color: #526b70;
+}
+
+.checkout-page .checkout-item .subtotal {
+    margin-top: 10px;
+    color: #126b70;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.checkout-page .checkout-total {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+    padding-top: 18px;
+    margin-top: 12px;
+    border-top: 1px solid #e1eeee;
+}
+
+.checkout-page .checkout-total h2 {
+    margin: 0;
+    color: #126b70;
+    font-size: 22px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .pickup-card {
+    background: #eff8f7;
+    border-color: #dcecea;
+    box-shadow: none;
+}
+
+.checkout-page .pickup-card h2 {
+    margin-bottom: 10px;
+    color: #126b70;
+}
+
+.checkout-page .pickup-card p {
+    margin: 6px 0;
+    color: #526b70;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.checkout-page .pickup-card .pickup-note {
+    margin-top: 12px;
+    color: #35656a;
+    font-weight: 600;
+}
+
+.checkout-page .empty-message {
+    width: 100%;
+    min-width: 0;
+    padding: 28px 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.checkout-page .empty-message p {
+    margin: 0 0 15px;
+    color: #71858a;
+    font-size: 13px;
+}
+
+.checkout-page .btn-primary {
+    display: inline-block;
+    max-width: 100%;
+    padding: 13px 20px;
+    box-sizing: border-box;
+    background: #16817e;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.checkout-page .btn-primary:hover {
+    background: #106b69;
+}
+
+.checkout-page .btn-primary:focus-visible,
+.checkout-page .back-link:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.checkout-page .checkout-form {
+    width: 100%;
+    min-width: 0;
+    margin-top: 20px;
+}
+
+.checkout-page .checkout-form button {
+    min-height: 44px;
+}
+
+.checkout-page .checkout-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    min-width: 0;
+    margin-top: 22px;
+}
+
+.checkout-page .back-link {
+    color: #126b70;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.checkout-page .back-link:hover {
+    color: #0b5156;
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+    .checkout-page {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .checkout-page {
+        padding: 15px;
+    }
+
+    .checkout-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .checkout-page .page-header p {
+        font-size: 13px;
+    }
+
+    .checkout-page .checkout-card,
+    .checkout-page .pickup-card {
+        padding: 18px;
+    }
+
+    .checkout-page .checkout-total {
+        justify-content: flex-start;
+    }
+
+    .checkout-page .checkout-total h2 {
+        font-size: 20px;
+    }
+
+    .checkout-page .checkout-form .btn-primary {
+        width: 100%;
+    }
+
+    .checkout-page .checkout-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    .checkout-page {
+        padding: 12px;
+    }
+
+    .checkout-page .checkout-card,
+    .checkout-page .pickup-card {
+        padding: 16px;
+    }
+
+    .checkout-page .checkout-total h2 {
+        font-size: 18px;
+    }
+}
+

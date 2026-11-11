@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | AquaTrack{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="checkout-page" aria-labelledby="checkout-title">
+
+    <header class="page-header">
+        <h1 id="checkout-title">Checkout</h1>
+        <p>
+            Review your selected fish products and order information
+            before placing your order.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="checkout-card" aria-labelledby="customer-information-title">
+        <h2 id="customer-information-title">Customer Information</h2>
+
+        <p class="customer-info">
+            <strong>Customer Name:</strong>
+            {{ customer_name or "Customer" }}
+        </p>
+    </section>
+
+    <section class="checkout-card" aria-labelledby="order-summary-title">
+        <h2 id="order-summary-title">Order Summary</h2>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+                <article class="checkout-item">
+                    <h3>{{ item.product_name }}</h3>
+
+                    <p>
+                        <strong>Category:</strong>
+                        {{ item.category or "Fish" }}
+                    </p>
+
+                    <p>
+                        <strong>Price:</strong>
+                        ₱{{ "%.2f"|format(item.price|float) }}
+                    </p>
+
+                    <p>
+                        <strong>Quantity:</strong>
+                        {{ item.quantity }}
+                    </p>
+
+                    <p class="subtotal">
+                        Subtotal:
+                        ₱{{ "%.2f"|format(item.subtotal|float) }}
+                    </p>
+                </article>
+            {% endfor %}
+
+            <div class="checkout-total">
+                <h2>
+                    Total Amount:
+                    ₱{{ "%.2f"|format(total|float) }}
+                </h2>
+            </div>
+        {% else %}
+            <div class="empty-message" role="status">
+                <p>Your shopping cart is empty.</p>
+
+                <a
+                    href="{{ url_for('customer.catalog') }}"
+                    class="btn-primary"
+                >
+                    Browse Fish Catalog
+                </a>
+            </div>
+        {% endif %}
+    </section>
+
+    <aside class="pickup-card" aria-labelledby="pickup-title">
+        <h2 id="pickup-title">Store Pickup Only</h2>
+
+        <p>
+            Your order must be collected personally at JRJ PETSHOP.
+        </p>
+
+        <p>
+            Delivery service is not available.
+        </p>
+
+        <p class="pickup-note">
+            Please make sure your order details are correct before placing
+            your order.
+        </p>
+    </aside>
+
+    {% if cart_items %}
+        <form
+            method="POST"
+            action="{{ url_for('customer.place_order') }}"
+            class="checkout-form"
+            onsubmit="return confirm('Are you sure you want to place this order?');"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button type="submit" class="btn-primary">
+                Place Order
+            </button>
+        </form>
+    {% endif %}
+
+    <nav class="checkout-links" aria-label="Checkout navigation">
+        <a
+            href="{{ url_for('customer.cart') }}"
+            class="back-link"
+        >
+            Back to Cart
+        </a>
+
+        <a
+            href="{{ url_for('customer.catalog') }}"
+            class="back-link"
+        >
+            Back to Daily Fish Catalog
+        </a>
+    </nav>
+
+</section>
+{% endblock %}

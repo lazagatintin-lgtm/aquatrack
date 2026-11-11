@@ -1,0 +1,297 @@
+
+{% extends "base.html" %}
+
+{% block title %}Email Verification | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.otp-page {
+    width: 100%;
+    min-width: 0;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 16px;
+}
+
+.otp-card {
+    width: 100%;
+    max-width: 430px;
+    min-width: 0;
+    padding: 35px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 15px;
+    box-shadow: 0 6px 24px rgba(28, 83, 88, 0.08);
+    text-align: center;
+}
+
+.otp-card > h1 {
+    margin: 0;
+    color: #126b70;
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.otp-subtitle {
+    margin: 7px 0 25px;
+    color: #789094;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.otp-heading {
+    margin-bottom: 24px;
+}
+
+.otp-heading h2 {
+    margin: 0 0 8px;
+    color: #24434a;
+    font-size: 21px;
+}
+
+.otp-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.otp-card .form-group {
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.otp-card label {
+    display: block;
+    margin-bottom: 8px;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.otp-input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 15px 10px;
+    background: #fbfdfd;
+    border: 1px solid #d8e6e6;
+    border-radius: 8px;
+    color: #24434a;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-align: center;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #16817e;
+    box-shadow: 0 0 0 3px rgba(22, 129, 126, 0.12);
+}
+
+.otp-input::placeholder {
+    color: #a0afb1;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.otp-card .btn-primary,
+.otp-card .btn-secondary {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.otp-card .btn-primary {
+    background: #16817e;
+    border: 1px solid #16817e;
+    color: #ffffff;
+}
+
+.otp-card .btn-primary:hover {
+    background: #106b69;
+}
+
+.otp-secondary-form {
+    margin-top: 12px;
+}
+
+.otp-card .btn-secondary {
+    background: #ffffff;
+    border: 1px solid #d8e6e6;
+    color: #35656a;
+}
+
+.otp-card .btn-secondary:hover {
+    background: #eff8f7;
+    border-color: #16817e;
+}
+
+.otp-card button:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .otp-page {
+        min-height: auto;
+        padding: 25px 14px;
+    }
+
+    .otp-card {
+        padding: 27px 21px;
+    }
+
+    .otp-card > h1 {
+        font-size: 26px;
+    }
+
+    .otp-input {
+        font-size: 20px;
+        letter-spacing: 7px;
+    }
+}
+
+@media (max-width: 380px) {
+    .otp-card {
+        padding: 24px 16px;
+    }
+
+    .otp-card > h1 {
+        font-size: 24px;
+    }
+
+    .otp-subtitle {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+    }
+
+    .otp-input {
+        font-size: 19px;
+        letter-spacing: 5px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="otp-page" aria-labelledby="otp-title">
+
+    <div class="otp-card">
+
+        <h1 id="otp-title">AquaTrack</h1>
+
+        <p class="otp-subtitle">
+            JRJ PETSHOP STOCK MONITORING SYSTEM
+        </p>
+
+        <div class="otp-heading">
+            <h2>Email Verification</h2>
+
+            <p>
+                Enter the 6-digit verification code sent to your
+                registered email address to verify your
+                {{ account_type }} login.
+            </p>
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.verify_otp_route') }}"
+            data-prevent-double-submit
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="form-group">
+
+                <label for="otp">Verification Code</label>
+
+                <input
+                    type="text"
+                    id="otp"
+                    name="otp"
+                    class="otp-input"
+                    placeholder="000000"
+                    inputmode="numeric"
+                    pattern="[0-9]{6}"
+                    minlength="6"
+                    maxlength="6"
+                    autocomplete="one-time-code"
+                    aria-describedby="otp-instructions"
+                    required
+                    autofocus
+                >
+
+                <small id="otp-instructions" hidden>
+                    Enter the six-digit code sent to your email.
+                </small>
+
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Verify Code
+            </button>
+
+        </form>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.resend_otp') }}"
+            class="otp-secondary-form"
+            data-prevent-double-submit
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button type="submit" class="btn-secondary">
+                Resend OTP
+            </button>
+
+        </form>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.logout') }}"
+            class="otp-secondary-form"
+            data-prevent-double-submit
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button type="submit" class="btn-secondary">
+                Cancel and Log Out
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

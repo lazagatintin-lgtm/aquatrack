@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Losses | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.inventory-losses-page {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.inventory-losses-page .page-header {
+    margin-bottom: 24px;
+}
+
+.inventory-losses-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.inventory-losses-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.inventory-losses-page .content-section {
+    width: 100%;
+    min-width: 0;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+    box-sizing: border-box;
+}
+
+.inventory-losses-page .section-heading {
+    margin-bottom: 18px;
+}
+
+.inventory-losses-page .section-heading h2 {
+    margin: 0 0 6px;
+    color: #20545a;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.inventory-losses-page .section-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.inventory-losses-page .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.inventory-losses-page .loss-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.inventory-losses-page .loss-table th {
+    padding: 13px 12px;
+    background: #eff8f7;
+    color: #35656a;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.inventory-losses-page .loss-table td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #edf2f2;
+    color: #526b70;
+    font-size: 13px;
+    line-height: 1.5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.inventory-losses-page .loss-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.inventory-losses-page .loss-table tbody tr:hover {
+    background: #f8fbfb;
+}
+
+.inventory-losses-page .loss-table th:nth-child(1),
+.inventory-losses-page .loss-table td:nth-child(1) {
+    width: 17%;
+}
+
+.inventory-losses-page .loss-table th:nth-child(2),
+.inventory-losses-page .loss-table td:nth-child(2) {
+    width: 23%;
+}
+
+.inventory-losses-page .loss-table th:nth-child(3),
+.inventory-losses-page .loss-table td:nth-child(3) {
+    width: 13%;
+}
+
+.inventory-losses-page .loss-table th:nth-child(4),
+.inventory-losses-page .loss-table td:nth-child(4) {
+    width: 27%;
+}
+
+.inventory-losses-page .loss-table th:nth-child(5),
+.inventory-losses-page .loss-table td:nth-child(5) {
+    width: 20%;
+}
+
+.inventory-losses-page .code-text {
+    color: #126b70;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.inventory-losses-page .product-code {
+    display: block;
+    margin-top: 4px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.inventory-losses-page .mobile-loss-list {
+    display: none;
+}
+
+.inventory-losses-page .loss-card {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf2f2;
+}
+
+.inventory-losses-page .loss-card:first-child {
+    padding-top: 0;
+}
+
+.inventory-losses-page .loss-card:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.inventory-losses-page .loss-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.inventory-losses-page .loss-card-header strong {
+    color: #126b70;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.inventory-losses-page .loss-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.inventory-losses-page .loss-detail {
+    min-width: 0;
+}
+
+.inventory-losses-page .loss-detail span {
+    display: block;
+    margin-bottom: 4px;
+    color: #71858a;
+    font-size: 11px;
+}
+
+.inventory-losses-page .loss-detail strong {
+    display: block;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.inventory-losses-page .empty-state {
+    padding: 30px 20px;
+    background: #f2f9fb;
+    border: 1px solid #dcebef;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.inventory-losses-page .empty-state h3 {
+    margin: 0 0 8px;
+    color: #20545a;
+    font-size: 18px;
+}
+
+.inventory-losses-page .empty-state p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.inventory-losses-page .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.inventory-losses-page .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 17px;
+    background: #6c7c80;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.inventory-losses-page .back-button:hover {
+    background: #536267;
+    color: #ffffff;
+}
+
+@media (max-width: 700px) {
+    .inventory-losses-page {
+        padding: 18px;
+    }
+
+    .inventory-losses-page .content-section {
+        padding: 18px;
+    }
+
+    .inventory-losses-page .desktop-loss-table {
+        display: none;
+    }
+
+    .inventory-losses-page .mobile-loss-list {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .inventory-losses-page {
+        padding: 15px;
+    }
+
+    .inventory-losses-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .inventory-losses-page .content-section {
+        padding: 15px;
+    }
+
+    .inventory-losses-page .loss-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .inventory-losses-page .button-group {
+        flex-direction: column;
+    }
+
+    .inventory-losses-page .back-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 380px) {
+    .inventory-losses-page {
+        padding: 12px;
+    }
+
+    .inventory-losses-page .content-section {
+        padding: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="inventory-losses-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Inventory Losses</h1>
+            <p>View and review recorded fish inventory losses.</p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div
+                    class="alert alert-{{ 'danger' if category == 'error' else category }}"
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Loss Records</h2>
+            <p>List of fish recorded as lost or damaged.</p>
+        </div>
+
+        {% if losses %}
+
+            <!-- DESKTOP TABLE -->
+            <div class="desktop-loss-table">
+                <div class="table-wrapper">
+                    <table class="loss-table">
+                        <thead>
+                            <tr>
+                                <th>Loss Code</th>
+                                <th>Product Name</th>
+                                <th>Quantity Lost</th>
+                                <th>Reason</th>
+                                <th>Loss Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for loss in losses %}
+                            <tr>
+                                <td>
+                                    <span class="code-text">
+                                        {{ loss.loss_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ loss.product_name }}
+                                    <span class="product-code">
+                                        Product Code:
+                                        {{ loss.product_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>{{ loss.quantity }}</td>
+
+                                <td>{{ loss.reason }}</td>
+
+                                <td>
+                                    {{ loss.loss_date.strftime('%b %d, %Y') if loss.loss_date else "N/A" }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MOBILE CARDS -->
+            <div class="mobile-loss-list">
+                {% for loss in losses %}
+                <article class="loss-card">
+
+                    <div class="loss-card-header">
+                        <strong>
+                            Loss Code: {{ loss.loss_code or "N/A" }}
+                        </strong>
+                    </div>
+
+                    <div class="loss-details">
+
+                        <div class="loss-detail">
+                            <span>Product Name</span>
+                            <strong>{{ loss.product_name }}</strong>
+                        </div>
+
+                        <div class="loss-detail">
+                            <span>Product Code</span>
+                            <strong>{{ loss.product_code or "N/A" }}</strong>
+                        </div>
+
+                        <div class="loss-detail">
+                            <span>Quantity Lost</span>
+                            <strong>{{ loss.quantity }}</strong>
+                        </div>
+
+                        <div class="loss-detail">
+                            <span>Reason</span>
+                            <strong>{{ loss.reason }}</strong>
+                        </div>
+
+                        <div class="loss-detail">
+                            <span>Loss Date</span>
+                            <strong>
+                                {{ loss.loss_date.strftime('%b %d, %Y') if loss.loss_date else "N/A" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Inventory Losses Recorded</h3>
+                <p>
+                    Recorded inventory losses will appear here once
+                    inventory loss transactions are added.
+                </p>
+            </div>
+
+        {% endif %}
+
+        <div class="button-group">
+            <a
+                href="{{ url_for('admin.dashboard') }}"
+                class="back-button"
+            >
+                Back to Dashboard
+            </a>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

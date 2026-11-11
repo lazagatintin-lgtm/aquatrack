@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Report | AquaTrack{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sales-report.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container sales-report">
+
+    <section class="page-header">
+        <div>
+            <h1>Sales Report</h1>
+            <p>View recorded sales and verified payment details.</p>
+        </div>
+
+        <div class="report-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </section>
+
+    <!-- TOTAL VERIFIED SALES -->
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Total Verified Sales</h2>
+            <p>
+                Total amount collected from verified payments
+                {% if from_date or to_date %}for the selected date range{% else %}across all dates{% endif %}.
+            </p>
+        </div>
+
+        <div class="card sales-summary-card">
+            <h2>₱{{ "%.2f"|format(total_sales|float) }}</h2>
+            <p>Total Verified Income</p>
+        </div>
+
+    </section>
+
+    <!-- SALES RECORDS -->
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Sales Records</h2>
+            <p>
+                Review customer orders and verified payment amounts.
+                {{ total_records }} record(s) found.
+            </p>
+        </div>
+
+        <form method="GET" class="sales-report-filters">
+            <div class="form-group">
+                <label for="from-date">From</label>
+                <input
+                    type="date"
+                    id="from-date"
+                    name="from_date"
+                    value="{{ from_date }}"
+                >
+            </div>
+            <div class="form-group">
+                <label for="to-date">To</label>
+                <input
+                    type="date"
+                    id="to-date"
+                    name="to_date"
+                    value="{{ to_date }}"
+                >
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+            {% if from_date or to_date %}
+                <a href="{{ url_for('reports.sales_report') }}" class="btn btn-secondary">
+                    Clear filters
+                </a>
+            {% endif %}
+        </form>
+
+        <div class="table-container report-table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order Code</th>
+                        <th>Customer Code</th>
+                        <th>Order Date</th>
+                        <th>Order Amount</th>
+                        <th>Verified Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.order_code or "N/A" }}</td>
+                        <td>{{ sale.user_code or "N/A" }}</td>
+
+                        <td>
+                            {{ sale.order_date.strftime('%B %d, %Y %I:%M %p') if sale.order_date else 'N/A' }}
+                        </td>
+
+                        <td>
+                            ₱{{ "%.2f"|format(sale.total_amount|float) }}
+                        </td>
+
+                        <td>
+                            ₱{{ "%.2f"|format(sale.verified_total|float) }}
+                        </td>
+
+                        <td>
+                            {% if sale.status == 'Cancelled' %}
+                                <span class="status-badge status-low">
+                                    Cancelled
+                                </span>
+                            {% elif sale.status == 'Completed' %}
+                                <span class="status-badge status-available">
+                                    Completed
+                                </span>
+                            {% else %}
+                                <span class="status-badge">
+                                    {{ sale.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            No sales records found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        {% if total_pages > 1 %}
+            <nav class="sales-report-pagination" aria-label="Sales report pages">
+                {% if page > 1 %}
+                    <a
+                        class="btn btn-secondary"
+                        href="{{ url_for('reports.sales_report', from_date=from_date or None, to_date=to_date or None, page=page - 1) }}"
+                    >Previous</a>
+                {% else %}
+                    <span class="btn btn-secondary" aria-disabled="true">Previous</span>
+                {% endif %}
+
+                <span>Page {{ page }} of {{ total_pages }}</span>
+
+                {% if page < total_pages %}
+                    <a
+                        class="btn btn-secondary"
+                        href="{{ url_for('reports.sales_report', from_date=from_date or None, to_date=to_date or None, page=page + 1) }}"
+                    >Next</a>
+                {% else %}
+                    <span class="btn btn-secondary" aria-disabled="true">Next</span>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

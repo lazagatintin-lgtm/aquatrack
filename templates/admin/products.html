@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block title %}Product Management | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-management {
+    width: 100%;
+    color: #172b28;
+}
+
+.product-management h1,
+.product-management h2,
+.product-management h3 {
+    color: #172b28;
+}
+
+.product-management .page-header p {
+    color: #64736f;
+    line-height: 1.6;
+}
+
+.product-management .product-section {
+    margin-top: 24px;
+}
+
+.product-management .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+}
+
+.product-management .data-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.product-management .data-table th {
+    color: #263b36;
+    white-space: nowrap;
+}
+
+.product-management .data-table td {
+    color: #273b36;
+    vertical-align: middle;
+}
+
+.product-management .product-code {
+    min-width: 110px;
+    font-weight: 700;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.product-management .product-name {
+    min-width: 130px;
+    font-weight: 700;
+}
+
+.product-management .product-thumbnail {
+    width: 64px;
+    height: 52px;
+    border-radius: 7px;
+    background: #eff8f7;
+    object-fit: cover;
+}
+
+.product-management .product-no-image {
+    color: #718582;
+    font-size: 12px;
+}
+
+.product-management .product-description {
+    min-width: 150px;
+    max-width: 240px;
+    white-space: normal;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.product-management .quantity-value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.product-management .status-badge {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.product-management .status-available {
+    background: #e4f5eb;
+    color: #207044;
+}
+
+.product-management .status-low {
+    background: #fff2d8;
+    color: #986000;
+}
+
+.product-management .status-out {
+    background: #fde8e8;
+    color: #b42323;
+}
+
+.product-management .status-over {
+    background: #eee8ff;
+    color: #6240a5;
+}
+
+.product-management .product-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.product-management .product-actions form {
+    margin: 0;
+}
+
+.product-management .product-actions .btn {
+    white-space: nowrap;
+}
+
+.product-management .product-actions button:focus-visible,
+.product-management .product-actions a:focus-visible,
+.product-management .page-header a:focus-visible,
+.product-management .page-footer a:focus-visible,
+.product-management .empty-state a:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+.product-management .record-count {
+    margin-top: 5px;
+    color: #64736f;
+    font-size: 13px;
+}
+
+.product-management .empty-state {
+    padding: 35px 15px;
+    text-align: center;
+}
+
+.product-management .empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.product-management .empty-state p {
+    margin-bottom: 18px;
+    color: #64736f;
+    line-height: 1.6;
+}
+
+.product-management .page-footer {
+    margin-top: 24px;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+    .product-management .page-header {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .product-management .data-table {
+        min-width: 1000px;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .product-management .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .product-management .page-header .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .product-management .product-section {
+        margin-top: 20px;
+    }
+
+    .product-management .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .product-management .record-count {
+        font-size: 12px;
+    }
+
+    .product-management .empty-state {
+        padding: 28px 14px;
+    }
+
+    .product-management .empty-state .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 380px) {
+    .product-management .page-header h1 {
+        font-size: 22px;
+    }
+
+    .product-management .page-header p {
+        font-size: 13px;
+    }
+
+    .product-management .data-table {
+        min-width: 950px;
+    }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+    .product-management *,
+    .product-management *::before,
+    .product-management *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container product-management">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Product Management</h1>
+            <p>
+                Manage all registered fish products and their inventory details.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.add_product') }}" class="btn btn-primary">
+            Add New Product
+        </a>
+    </div>
+
+    <!-- PRODUCT LIST -->
+    <div class="content-section product-section">
+
+        <div class="section-heading">
+            <h2>Product List</h2>
+
+            <div class="record-count">
+                {{ products|length }} registered product(s)
+            </div>
+        </div>
+
+        {% if products %}
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Product Code</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Stock Quantity</th>
+                        <th>Minimum Stock</th>
+                        <th>Maximum Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image_path %}
+                                <img
+                                    src="{{ url_for('static', filename=product.image_path) }}"
+                                    alt="{{ product.product_name }}"
+                                    class="product-thumbnail"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <span class="product-no-image">No photo</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="product-code">
+                            {{ product.product_code or "N/A" }}
+                        </td>
+
+                        <td class="product-name">
+                            {{ product.product_name }}
+                        </td>
+
+                        <td>
+                            {{ product.category or "—" }}
+                        </td>
+
+                        <td class="product-description">
+                            {{ product.description or "No description" }}
+                        </td>
+
+                        <td>
+                            ₱{{ "%.2f"|format(product.price|float) }}
+                        </td>
+
+                        <td class="quantity-value">
+                            {{ product.quantity }}
+                        </td>
+
+                        <td>
+                            {{ product.min_stock }}
+                        </td>
+
+                        <td>
+                            {{ product.max_stock if product.max_stock is not none else "—" }}
+                        </td>
+
+                        <td>
+                            {% if product.quantity|int <= 0 %}
+                                <span class="status-badge status-out">
+                                    Out of Stock
+                                </span>
+                            {% elif product.quantity|int <= product.min_stock|int %}
+                                <span class="status-badge status-low">
+                                    Low Stock
+                                </span>
+                            {% elif product.max_stock is not none and product.quantity|int > product.max_stock|int %}
+                                <span class="status-badge status-over">
+                                    Over Stock
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-available">
+                                    Available
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="product-actions">
+
+                                <a
+                                    href="{{ url_for('admin.edit_product', product_id=product.id) }}"
+                                    class="btn btn-secondary"
+                                >
+                                    Edit
+                                </a>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('admin.delete_product', product_id=product.id) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete this product? This action cannot be undone.');"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <h3>No Products Yet</h3>
+
+            <p>
+                No fish products have been registered yet.
+            </p>
+
+            <a
+                href="{{ url_for('admin.add_product') }}"
+                class="btn btn-primary"
+            >
+                Add Your First Product
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- BACK TO DASHBOARD -->
+    <div class="page-footer">
+        <a href="{{ url_for('admin.dashboard') }}">
+            Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

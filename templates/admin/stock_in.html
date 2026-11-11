@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+{% block title %}Stock In | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.stock-in-page {
+    width: 100%;
+    max-width: 900px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.stock-in-page .page-header {
+    margin-bottom: 24px;
+}
+
+.stock-in-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 28px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.stock-in-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.stock-in-page .stock-form-section {
+    width: 100%;
+    min-width: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.stock-in-page .section-heading {
+    margin-bottom: 22px;
+}
+
+.stock-in-page .section-heading h2 {
+    margin: 0 0 6px;
+    color: #20545a;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.stock-in-page .section-heading p {
+    margin: 0;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.stock-in-page .stock-form {
+    width: 100%;
+    min-width: 0;
+}
+
+.stock-in-page .form-group {
+    min-width: 0;
+    margin-bottom: 19px;
+}
+
+.stock-in-page .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #35656a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stock-in-page .form-group input,
+.stock-in-page .form-group select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 45px;
+    padding: 11px 13px;
+    box-sizing: border-box;
+    border: 1px solid #d5e5e5;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #24434a;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.stock-in-page .form-group input:focus,
+.stock-in-page .form-group select:focus {
+    outline: none;
+    border-color: #16858a;
+    box-shadow: 0 0 0 3px rgba(22, 133, 138, 0.12);
+}
+
+.stock-in-page .form-group input::placeholder {
+    color: #9aabad;
+}
+
+.stock-in-page .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.stock-in-page .form-actions .btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.stock-in-page .form-actions .btn-primary {
+    background: #147b80;
+    color: #ffffff;
+}
+
+.stock-in-page .form-actions .btn-primary:hover {
+    background: #10666b;
+}
+
+.stock-in-page .form-actions .btn-secondary {
+    background: #edf3f3;
+    color: #456166;
+}
+
+.stock-in-page .form-actions .btn-secondary:hover {
+    background: #dfeaea;
+}
+
+.stock-in-page .empty-state {
+    padding: 30px 20px;
+    border: 1px dashed #cbdede;
+    border-radius: 10px;
+    background: #f8fbfb;
+    text-align: center;
+}
+
+.stock-in-page .empty-state h3 {
+    margin: 0 0 8px;
+    color: #20545a;
+    font-size: 18px;
+}
+
+.stock-in-page .empty-state p {
+    margin: 0 0 18px;
+    color: #71858a;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.stock-in-page .empty-state .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #147b80;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.stock-in-page .empty-state .btn:hover {
+    background: #10666b;
+}
+
+@media (max-width: 768px) {
+    .stock-in-page {
+        padding: 20px;
+    }
+
+    .stock-in-page .stock-form-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .stock-in-page {
+        padding: 15px;
+    }
+
+    .stock-in-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .stock-in-page .stock-form-section {
+        padding: 17px;
+    }
+
+    .stock-in-page .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .stock-in-page .form-actions {
+        flex-direction: column;
+    }
+
+    .stock-in-page .form-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .stock-in-page {
+        padding: 12px;
+    }
+
+    .stock-in-page .stock-form-section {
+        padding: 14px;
+    }
+
+    .stock-in-page .page-header h1 {
+        font-size: 21px;
+    }
+
+    .stock-in-page .form-group input,
+    .stock-in-page .form-group select {
+        font-size: 13px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stock-in-page">
+
+    <section class="page-header">
+        <div>
+            <h1>Stock In</h1>
+            <p>Record additional fish stock in the inventory.</p>
+        </div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="stock-form-section">
+
+        <div class="section-heading">
+            <h2>Add Stock</h2>
+            <p>Select a fish product and enter the quantity to add.</p>
+        </div>
+
+        {% if products %}
+
+            <form
+                method="POST"
+                action="{{ url_for('inventory.stock_in') }}"
+                data-prevent-double-submit
+                onsubmit="return confirm('Are you sure you want to add this stock?');"
+                class="stock-form"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <div class="form-group">
+                    <label for="product_id">Fish Product</label>
+
+                    <select
+                        name="product_id"
+                        id="product_id"
+                        required
+                    >
+                        <option value="">Select a fish product</option>
+
+                        {% for product in products %}
+                            <option value="{{ product.id }}">
+                                {{ product.product_name }} (Current Stock: {{ product.quantity }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity to Add</label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        id="quantity"
+                        min="1"
+                        step="1"
+                        required
+                        placeholder="Enter quantity"
+                        inputmode="numeric"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason</label>
+
+                    <input
+                        type="text"
+                        name="reason"
+                        id="reason"
+                        maxlength="255"
+                        placeholder="Enter reason for adding stock"
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Add Stock
+                    </button>
+
+                    <a
+                        href="{{ url_for('admin.dashboard') }}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Fish Products Found</h3>
+                <p>
+                    Add a fish product first before recording additional stock.
+                </p>
+
+                <a
+                    href="{{ url_for('admin.add_product') }}"
+                    class="btn"
+                >
+                    Add Product
+                </a>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Out | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.stockout-page {
+    width: 100%;
+    max-width: 1050px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 28px 20px 45px;
+    color: #172b2a;
+    box-sizing: border-box;
+}
+
+.stockout-heading {
+    margin-bottom: 25px;
+}
+
+.stockout-heading h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: #172b2a;
+}
+
+.stockout-heading p {
+    color: #718582;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.stockout-breadcrumb {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #718582;
+    overflow-wrap: anywhere;
+}
+
+.stockout-breadcrumb a {
+    color: #397e79;
+    text-decoration: none;
+}
+
+.stockout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr);
+    gap: 22px;
+    align-items: start;
+    min-width: 0;
+}
+
+.stockout-card,
+.stockout-info {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e1ece9;
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 5px 20px rgba(34, 76, 70, 0.06);
+    box-sizing: border-box;
+}
+
+.stockout-card h2,
+.stockout-info h2 {
+    color: #172b2a;
+    font-size: 19px;
+    margin: 0 0 7px;
+}
+
+.stockout-subtitle {
+    color: #718582;
+    font-size: 13px;
+    margin: 0 0 23px;
+    line-height: 1.5;
+}
+
+.stockout-form-group {
+    min-width: 0;
+    margin-bottom: 19px;
+}
+
+.stockout-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #263c39;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.stockout-form-group input,
+.stockout-form-group select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid #d9e6e2;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #172b2a;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.stockout-form-group input:focus,
+.stockout-form-group select:focus {
+    outline: none;
+    border-color: #4f9d96;
+    box-shadow: 0 0 0 3px rgba(79, 157, 150, 0.13);
+}
+
+.stockout-help {
+    display: block;
+    margin-top: 6px;
+    color: #718582;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.stockout-notice {
+    background: #fff8ec;
+    border: 1px solid #f0dfbd;
+    color: #805c24;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.stockout-notice strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stockout-info {
+    background: #f7fbfa;
+}
+
+.stockout-info h2 {
+    margin-bottom: 18px;
+}
+
+.stockout-info-item {
+    display: flex;
+    gap: 11px;
+    margin-bottom: 17px;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.stockout-info-number {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: #e5f3f1;
+    color: #397e79;
+    font-weight: 750;
+}
+
+.stockout-info-item > div:last-child {
+    min-width: 0;
+}
+
+.stockout-info-item strong {
+    display: block;
+    color: #263c39;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.stockout-info-item span {
+    display: block;
+    color: #718582;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.stockout-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.stockout-button {
+    min-height: 44px;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.stockout-button-primary {
+    background: #397e79;
+    color: #ffffff;
+}
+
+.stockout-button-primary:hover {
+    background: #2e6964;
+}
+
+.stockout-button-secondary {
+    background: #edf3f1;
+    color: #344b47;
+}
+
+.stockout-button-secondary:hover {
+    background: #dfeae6;
+}
+
+.stockout-empty {
+    background: #ffffff;
+    border: 1px solid #e1ece9;
+    border-radius: 14px;
+    padding: 35px 22px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.stockout-empty h2 {
+    color: #172b2a;
+    margin-top: 0;
+}
+
+.stockout-empty p {
+    color: #718582;
+    line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+    .stockout-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+        gap: 16px;
+    }
+
+    .stockout-card,
+    .stockout-info {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+    .stockout-page {
+        padding: 22px 14px 35px;
+    }
+
+    .stockout-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stockout-heading h1 {
+        font-size: 24px;
+    }
+
+    .stockout-actions {
+        flex-direction: column;
+    }
+
+    .stockout-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .stockout-page {
+        padding: 18px 10px 28px;
+    }
+
+    .stockout-card,
+    .stockout-info {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .stockout-heading h1 {
+        font-size: 22px;
+    }
+
+    .stockout-card h2,
+    .stockout-info h2 {
+        font-size: 17px;
+    }
+
+    .stockout-form-group input,
+    .stockout-form-group select {
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stockout-page">
+
+    <div class="stockout-heading">
+
+        <div class="stockout-breadcrumb">
+            <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+            / Stock Out
+        </div>
+
+        <h1>Stock Out</h1>
+
+        <p>
+            Record general stock reductions from your current fish inventory.
+        </p>
+
+    </div>
+
+    {% if products %}
+
+    <div class="stockout-layout">
+
+        <section class="stockout-card">
+
+            <h2>Remove Stock</h2>
+
+            <p class="stockout-subtitle">
+                Select a fish product and enter the quantity to remove.
+            </p>
+
+            <div class="stockout-notice">
+                <strong>Stock Reduction Notice</strong>
+                This transaction reduces actual inventory and today's
+                catalog quantity, if a catalog entry exists. It will
+                appear in Stock History but will not be classified
+                as an Inventory Loss.
+            </div>
+
+            <form
+                method="POST"
+                action="{{ url_for('inventory.stock_out') }}"
+                data-prevent-double-submit
+                onsubmit="return confirm('Are you sure you want to remove this quantity from the inventory?');"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <div class="stockout-form-group">
+
+                    <label for="product_id">Fish Product</label>
+
+                    <select
+                        id="product_id"
+                        name="product_id"
+                        required
+                    >
+
+                        <option value="">Select a fish product</option>
+
+                        {% for product in products %}
+
+                            <option
+                                value="{{ product.id }}"
+                                {% if product.quantity|int <= 0 %}disabled{% endif %}
+                            >
+                                {{ product.product_name }}
+                                (Current Stock: {{ product.quantity }})
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <span class="stockout-help">
+                        Products with zero stock cannot be selected.
+                    </span>
+
+                </div>
+
+                <div class="stockout-form-group">
+
+                    <label for="quantity">Quantity to Remove</label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        min="1"
+                        step="1"
+                        required
+                        placeholder="Enter quantity"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+                <div class="stockout-form-group">
+
+                    <label for="reason">Reason for Stock Reduction</label>
+
+                    <input
+                        type="text"
+                        id="reason"
+                        name="reason"
+                        maxlength="255"
+                        required
+                        placeholder="Enter reason for stock reduction"
+                    >
+
+                    <span class="stockout-help">
+                        Maximum of 255 characters.
+                    </span>
+
+                </div>
+
+                <div class="stockout-actions">
+
+                    <button
+                        type="submit"
+                        class="stockout-button stockout-button-primary"
+                    >
+                        Remove Stock
+                    </button>
+
+                    <a
+                        href="{{ url_for('admin.dashboard') }}"
+                        class="stockout-button stockout-button-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <aside class="stockout-info">
+
+            <h2>How It Works</h2>
+
+            <div class="stockout-info-item">
+                <div class="stockout-info-number">1</div>
+                <div>
+                    <strong>Select a Product</strong>
+                    <span>Choose the fish product that needs a stock reduction.</span>
+                </div>
+            </div>
+
+            <div class="stockout-info-item">
+                <div class="stockout-info-number">2</div>
+                <div>
+                    <strong>Enter the Quantity</strong>
+                    <span>Specify how many units should be removed.</span>
+                </div>
+            </div>
+
+            <div class="stockout-info-item">
+                <div class="stockout-info-number">3</div>
+                <div>
+                    <strong>Provide a Reason</strong>
+                    <span>Explain why the stock is being reduced.</span>
+                </div>
+            </div>
+
+            <div class="stockout-info-item">
+                <div class="stockout-info-number">4</div>
+                <div>
+                    <strong>Automatic Update</strong>
+                    <span>The system updates inventory and records the stock movement.</span>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+    {% else %}
+
+    <div class="stockout-empty">
+
+        <h2>No Fish Products Found</h2>
+
+        <p>
+            Add a fish product first before recording stock reductions.
+        </p>
+
+        <a
+            href="{{ url_for('admin.add_product') }}"
+            class="stockout-button stockout-button-primary"
+        >
+            Add Product
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

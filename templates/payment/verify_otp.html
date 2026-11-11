@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Verification | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.payment-verification-page {
+    width: 100%;
+    max-width: 560px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 32px 20px;
+    box-sizing: border-box;
+    color: #24434a;
+}
+
+.payment-verification-card {
+    width: 100%;
+    min-width: 0;
+    padding: 30px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(28, 83, 88, 0.06);
+}
+
+.payment-verification-header {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.payment-verification-header h2 {
+    margin: 0 0 10px;
+    color: #126b70;
+    font-size: 25px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.payment-verification-card .form-group {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 22px;
+}
+
+.payment-verification-card label {
+    display: block;
+    margin-bottom: 9px;
+    color: #35656a;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.payment-verification-card .otp-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    padding: 12px;
+    box-sizing: border-box;
+    background: #fbfdfd;
+    border: 1px solid #cbdedc;
+    border-radius: 8px;
+    color: #20545a;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-align: center;
+}
+
+.payment-verification-card .otp-input:focus {
+    outline: none;
+    border-color: #16817e;
+    box-shadow: 0 0 0 3px rgba(22, 129, 126, 0.13);
+}
+
+.payment-verification-card .otp-input::placeholder {
+    color: #b5c8c7;
+    opacity: 1;
+}
+
+.payment-verification-card #otpHelp {
+    display: block;
+    margin-top: 9px;
+    color: #71858a;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.payment-verification-card .verify-button {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 18px;
+    box-sizing: border-box;
+    background: #16817e;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.payment-verification-card .verify-button:hover:not(:disabled) {
+    background: #106b69;
+}
+
+.payment-verification-card .verify-button:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.payment-verification-card .verify-button:disabled {
+    background: #8aadaa;
+    cursor: not-allowed;
+}
+
+.payment-verification-footer {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.payment-verification-footer a {
+    color: #126b70;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.payment-verification-footer a:hover {
+    color: #0b5156;
+    text-decoration: underline;
+}
+
+.payment-verification-footer a:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.payment-verification-footer form {
+    margin-top: 14px;
+}
+
+.payment-verification-footer button {
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid #cbdedc;
+    border-radius: 7px;
+    color: #126b70;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.payment-verification-footer button:hover {
+    background: #eff8f7;
+    border-color: #16817e;
+}
+
+.payment-verification-footer button:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .payment-verification-page {
+        padding: 22px 15px;
+    }
+
+    .payment-verification-card {
+        padding: 23px 19px;
+    }
+
+    .payment-verification-header h2 {
+        font-size: 22px;
+    }
+
+    .payment-verification-header p {
+        font-size: 13px;
+    }
+
+    .payment-verification-card .otp-input {
+        height: 52px;
+        font-size: 21px;
+        letter-spacing: 7px;
+    }
+}
+
+@media (max-width: 380px) {
+    .payment-verification-page {
+        padding: 18px 12px;
+    }
+
+    .payment-verification-card {
+        padding: 20px 15px;
+    }
+
+    .payment-verification-header h2 {
+        font-size: 20px;
+    }
+
+    .payment-verification-card .otp-input {
+        letter-spacing: 5px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="payment-verification-page">
+
+    <div class="payment-verification-card">
+
+        <div class="payment-verification-header">
+            <h2>Payment Verification</h2>
+
+            <p>
+                Enter the one-time password (OTP) sent to your
+                registered email address to verify your payment.
+            </p>
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('payment.verify_payment_otp') }}"
+            id="paymentOtpForm"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="form-group">
+                <label for="otp">Verification Code</label>
+
+                <input
+                    type="text"
+                    id="otp"
+                    name="otp"
+                    class="otp-input"
+                    placeholder="000000"
+                    maxlength="6"
+                    minlength="6"
+                    pattern="[0-9]{6}"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    aria-describedby="otpHelp"
+                    required
+                    autofocus
+                >
+
+                <small id="otpHelp">
+                    Enter the 6-digit code sent to your email.
+                    The code is valid for 5 minutes.
+                </small>
+            </div>
+
+            <button
+                type="submit"
+                class="verify-button"
+                id="verifyPaymentButton"
+            >
+                Verify Payment
+            </button>
+        </form>
+
+        <div class="payment-verification-footer">
+            <a href="{{ url_for('customer.my_orders') }}">
+                Back to My Orders
+            </a>
+            <form
+                method="POST"
+                action="{{ url_for('payment.resend_payment_otp') }}"
+                data-prevent-double-submit
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+                <button type="submit">Resend Verification Code</button>
+            </form>
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const otpInput = document.getElementById("otp");
+    const form = document.getElementById("paymentOtpForm");
+    const submitButton = document.getElementById("verifyPaymentButton");
+
+    let isSubmitting = false;
+
+    otpInput.addEventListener("input", function () {
+        this.value = this.value
+            .replace(/[^0-9]/g, "")
+            .slice(0, 6);
+
+        this.setCustomValidity("");
+    });
+
+    form.addEventListener("submit", function (event) {
+        if (isSubmitting) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!/^\d{6}$/.test(otpInput.value)) {
+            event.preventDefault();
+
+            otpInput.setCustomValidity(
+                "Please enter a valid 6-digit verification code."
+            );
+
+            otpInput.reportValidity();
+            return;
+        }
+
+        otpInput.setCustomValidity("");
+
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "Verifying...";
+    });
+});
+</script>
+{% endblock %}

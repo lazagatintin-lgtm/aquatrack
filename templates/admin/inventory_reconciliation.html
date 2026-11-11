@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Reconciliation | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.reconciliation-page {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    color: #172b28;
+}
+
+.reconciliation-page .page-header p,
+.reconciliation-page .section-description {
+    color: #64736f;
+    line-height: 1.6;
+}
+
+.reconciliation-page .notice {
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    border-left: 4px solid #4f9d96;
+    border-radius: 6px;
+    background: #eff8f7;
+    color: #315d58;
+    line-height: 1.6;
+}
+
+.reconciliation-page .table-responsive {
+    overflow-x: auto;
+}
+
+.reconciliation-page table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.reconciliation-page th,
+.reconciliation-page td {
+    padding: 12px;
+    border-bottom: 1px solid #e6efed;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.reconciliation-page th {
+    background: #f3f9f8;
+    color: #315d58;
+}
+
+.reconciliation-page td {
+    color: #344a45;
+}
+
+.reconciliation-page .quantity {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.reconciliation-page .issue {
+    color: #986000;
+    font-weight: 700;
+}
+
+.reconciliation-page .empty-state {
+    padding: 32px 16px;
+    text-align: center;
+    color: #64736f;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container reconciliation-page">
+    <header class="page-header">
+        <div>
+            <h1>Inventory Reconciliation</h1>
+            <p>
+                Compare each product's current quantity with its latest
+                recorded stock movement.
+            </p>
+        </div>
+    </header>
+
+    <section class="content-section">
+        <div class="notice">
+            This report is read-only. Products with no stock history but
+            positive stock are shown for review; older systems may contain
+            opening balances that were never recorded as movements.
+        </div>
+
+        <p class="section-description">
+            {{ issues|length }} item(s) require review. Resolve discrepancies
+            by checking the physical count and recording a stock adjustment
+            through the inventory workflow.
+        </p>
+
+        {% if issues %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Code</th>
+                            <th>Product</th>
+                            <th>Current Stock</th>
+                            <th>Latest Recorded Stock</th>
+                            <th>Last Movement</th>
+                            <th>Issue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in issues %}
+                            <tr>
+                                <td>{{ item.product_code or "N/A" }}</td>
+                                <td>{{ item.product_name }}</td>
+                                <td class="quantity">{{ item.current_quantity }}</td>
+                                <td class="quantity">
+                                    {{ item.latest_recorded_quantity if item.latest_recorded_quantity is not none else "—" }}
+                                </td>
+                                <td>
+                                    {{ item.latest_movement_at.strftime("%Y-%m-%d %H:%M") if item.latest_movement_at else "—" }}
+                                </td>
+                                <td class="issue">{{ item.issue }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No stock-history discrepancies were found.
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.analytics-report {
+    width: 100%;
+    min-width: 0;
+}
+
+.analytics-report .analytics-filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.analytics-report .filter-field {
+    min-width: 0;
+}
+
+.analytics-report .filter-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.analytics-report .filter-field input {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+}
+
+.analytics-report .filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.analytics-report .analytics-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.analytics-report .summary-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #e1eeee;
+    border-radius: 10px;
+    background: #f8fcfb;
+}
+
+.analytics-report .summary-card span {
+    display: block;
+    margin-bottom: 7px;
+    color: #71858a;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.analytics-report .summary-card strong {
+    display: block;
+    color: #126b70;
+    font-size: 21px;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.analytics-report .summary-loss strong {
+    color: #a76712;
+}
+
+.analytics-report .summary-alert strong {
+    color: #b42323;
+}
+
+.analytics-report .summary-over strong {
+    color: #6240a5;
+}
+
+.analytics-report .trend-chart {
+    display: grid;
+    gap: 9px;
+    max-height: 490px;
+    margin-bottom: 20px;
+    overflow: auto;
+    padding: 4px 2px;
+}
+
+.analytics-report .chart-row {
+    display: grid;
+    grid-template-columns: minmax(62px, 82px) minmax(60px, 1fr) minmax(85px, auto);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.analytics-report .chart-month {
+    color: #526b70;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.analytics-report .chart-track {
+    height: 14px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #edf3f2;
+}
+
+.analytics-report .chart-bar {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    border-radius: inherit;
+}
+
+.analytics-report .chart-income {
+    background: #239c7c;
+}
+
+.analytics-report .chart-loss {
+    background: #d49b45;
+}
+
+.analytics-report .chart-stock-in {
+    background: #239c7c;
+}
+
+.analytics-report .chart-stock-out {
+    background: #4a91b2;
+}
+
+.analytics-report .chart-value {
+    color: #263b36;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.analytics-report .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 0 0 12px;
+    color: #526b70;
+    font-size: 12px;
+}
+
+.analytics-report .legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+.analytics-report .analytics-table-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.analytics-report table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.analytics-report th,
+.analytics-report td {
+    padding: 12px 10px;
+    text-align: left;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.analytics-report th {
+    font-size: 13px;
+}
+
+.analytics-report td {
+    font-size: 13px;
+}
+
+.analytics-report .monthly-sales th:nth-child(1),
+.analytics-report .monthly-sales td:nth-child(1) {
+    width: 40%;
+}
+
+.analytics-report .monthly-sales th:nth-child(2),
+.analytics-report .monthly-sales td:nth-child(2) {
+    width: 25%;
+}
+
+.analytics-report .monthly-sales th:nth-child(3),
+.analytics-report .monthly-sales td:nth-child(3) {
+    width: 35%;
+}
+
+.analytics-report .monthly-losses th:nth-child(1),
+.analytics-report .monthly-losses td:nth-child(1) {
+    width: 50%;
+}
+
+.analytics-report .monthly-losses th:nth-child(2),
+.analytics-report .monthly-losses td:nth-child(2) {
+    width: 50%;
+}
+
+.analytics-report .monthly-stock th:nth-child(1),
+.analytics-report .monthly-stock td:nth-child(1) {
+    width: 40%;
+}
+
+.analytics-report .monthly-stock th:nth-child(2),
+.analytics-report .monthly-stock td:nth-child(2),
+.analytics-report .monthly-stock th:nth-child(3),
+.analytics-report .monthly-stock td:nth-child(3) {
+    width: 30%;
+}
+
+.analytics-report .empty-state {
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .analytics-report th,
+    .analytics-report td {
+        padding: 10px 7px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .analytics-report .analytics-filter {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .analytics-report .filter-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .analytics-report .filter-actions .btn {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .analytics-report .summary-card {
+        padding: 12px;
+    }
+
+    .analytics-report .summary-card strong {
+        font-size: 18px;
+    }
+
+    .analytics-report .chart-row {
+        grid-template-columns: 58px minmax(35px, 1fr) 78px;
+        gap: 7px;
+    }
+
+    .analytics-report .chart-month,
+    .analytics-report .chart-value {
+        font-size: 10px;
+    }
+
+    .analytics-report th,
+    .analytics-report td {
+        padding: 9px 6px;
+        font-size: 10px;
+    }
+
+    .analytics-report th {
+        line-height: 1.3;
+    }
+
+    .analytics-report .empty-state {
+        font-size: 10px;
+    }
+
+    .analytics-report .section-heading h2 {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 380px) {
+    .analytics-report th,
+    .analytics-report td {
+        padding: 8px 4px;
+        font-size: 9px;
+    }
+
+    .analytics-report .empty-state {
+        font-size: 9px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container analytics-report">
+
+    <section class="page-header">
+        <div>
+            <h1>Analytics Dashboard</h1>
+            <p>
+                Explore verified income, recorded inventory losses, and stock
+                movements for a selected period.
+            </p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <form method="GET" class="analytics-filter">
+            <div class="filter-field">
+                <label for="analytics-from-date">Start date</label>
+                <input
+                    type="date"
+                    id="analytics-from-date"
+                    name="from_date"
+                    value="{{ start_date }}"
+                    required
+                >
+            </div>
+
+            <div class="filter-field">
+                <label for="analytics-to-date">End date</label>
+                <input
+                    type="date"
+                    id="analytics-to-date"
+                    name="to_date"
+                    value="{{ end_date }}"
+                    required
+                >
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    Apply Dates
+                </button>
+                <a href="{{ url_for('analytics.dashboard') }}" class="btn btn-secondary">
+                    Last 12 Months
+                </a>
+            </div>
+        </form>
+
+        <div class="analytics-summary" aria-label="Selected period summary">
+            <div class="summary-card">
+                <span>Verified Income</span>
+                <strong>₱{{ "%.2f"|format(total_income|float) }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Verified Payment Records</span>
+                <strong>{{ total_verified_payments }}</strong>
+            </div>
+            <div class="summary-card summary-loss">
+                <span>Recorded Loss Quantity</span>
+                <strong>{{ total_lost }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Total Stock In</span>
+                <strong>{{ total_stock_in }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Total Stock Out</span>
+                <strong>{{ total_stock_out }}</strong>
+            </div>
+        </div>
+
+        <div class="section-heading">
+            <h2>Current Inventory Snapshot</h2>
+            <p>
+                Live stock status, independent of the selected date range.
+                Over Stock only applies to products with a configured maximum.
+            </p>
+        </div>
+        <div class="analytics-summary" aria-label="Current inventory summary">
+            <div class="summary-card">
+                <span>Registered Products</span>
+                <strong>{{ inventory_snapshot.total_products }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Total Physical Stock</span>
+                <strong>{{ inventory_snapshot.total_stock }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Available</span>
+                <strong>{{ inventory_snapshot.available_products }}</strong>
+            </div>
+            <div class="summary-card summary-loss">
+                <span>Low Stock</span>
+                <strong>{{ inventory_snapshot.low_stock_products }}</strong>
+            </div>
+            <div class="summary-card summary-alert">
+                <span>Out of Stock</span>
+                <strong>{{ inventory_snapshot.out_of_stock_products }}</strong>
+            </div>
+            <div class="summary-card summary-over">
+                <span>Over Stock</span>
+                <strong>{{ inventory_snapshot.over_stock_products }}</strong>
+            </div>
+            <div class="summary-card summary-over">
+                <span>Units Above Maximum</span>
+                <strong>{{ inventory_snapshot.excess_stock_units }}</strong>
+            </div>
+            <div class="summary-card">
+                <span>Current Inventory Value</span>
+                <strong>₱{{ "%.2f"|format(inventory_snapshot.inventory_value|float) }}</strong>
+            </div>
+        </div>
+        <p>
+            <a href="{{ url_for('admin.stock_monitoring') }}">
+                Open detailed Stock Monitoring
+            </a>
+        </p>
+    </section>
+
+    <!-- MONTHLY SALES AND INCOME -->
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Verified Income Trend</h2>
+            <p>
+                Income is grouped by verification date (payment date is used
+                when no verification timestamp is recorded). Cancelled orders
+                and unverified payments are excluded.
+            </p>
+        </div>
+
+        {% if not has_income_records %}
+            <div class="empty-state">
+                No verified payment records found for this date range.
+            </div>
+        {% endif %}
+
+        <div class="trend-chart" role="img" aria-label="Monthly verified income">
+            {% for sale in monthly_sales %}
+                <div class="chart-row">
+                    <span class="chart-month">{{ sale.month_label }}</span>
+                    <div class="chart-track">
+                        <span
+                            class="chart-bar chart-income"
+                            style="width: {{ sale.bar_width }}%;"
+                        ></span>
+                    </div>
+                    <strong class="chart-value">
+                        ₱{{ "%.2f"|format(sale.total_income|float) }}
+                    </strong>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-heading">
+            <h2>Monthly Income Details</h2>
+        </div>
+
+        <div class="table-container analytics-table-container">
+            <table class="monthly-sales">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Verified Payments</th>
+                        <th>Verified Income</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for sale in monthly_sales %}
+                    <tr>
+                        <td>{{ sale.month_label }}</td>
+                        <td>{{ sale.verified_payments }}</td>
+                        <td>₱{{ "%.2f"|format(sale.total_income|float) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            No verified payment records available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!-- MONTHLY INVENTORY LOSSES -->
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Inventory Loss Trend</h2>
+            <p>Total quantity recorded as lost during each month.</p>
+        </div>
+
+        {% if not has_loss_records %}
+            <div class="empty-state">
+                No inventory loss records found for this date range.
+            </div>
+        {% endif %}
+
+        <div class="trend-chart" role="img" aria-label="Monthly inventory losses">
+            {% for loss in monthly_losses %}
+                <div class="chart-row">
+                    <span class="chart-month">{{ loss.month_label }}</span>
+                    <div class="chart-track">
+                        <span
+                            class="chart-bar chart-loss"
+                            style="width: {{ loss.bar_width }}%;"
+                        ></span>
+                    </div>
+                    <strong class="chart-value">
+                        {{ loss.total_lost }} item(s)
+                    </strong>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-heading">
+            <h2>Monthly Loss Details</h2>
+        </div>
+
+        <div class="table-container analytics-table-container">
+            <table class="monthly-losses">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total Quantity Lost</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for loss in monthly_losses %}
+                    <tr>
+                        <td>{{ loss.month_label }}</td>
+                        <td>{{ loss.total_lost }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="empty-state">
+                            No monthly inventory loss records available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!-- MONTHLY STOCK MOVEMENT -->
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Monthly Stock Movement</h2>
+            <p>
+                Compare recorded stock additions and reductions. Stock out
+                includes all recorded reductions, including inventory losses.
+            </p>
+        </div>
+
+        <div class="chart-legend" aria-label="Chart legend">
+            <span>
+                <span class="legend-dot chart-stock-in"></span>
+                Stock In
+            </span>
+            <span>
+                <span class="legend-dot chart-stock-out"></span>
+                Stock Out
+            </span>
+        </div>
+
+        {% if not has_stock_records %}
+            <div class="empty-state">
+                No stock movement records found for this date range.
+            </div>
+        {% endif %}
+
+        <div class="trend-chart" role="img" aria-label="Monthly stock movement">
+            {% for stock in monthly_stock %}
+                <div class="chart-row">
+                    <span class="chart-month">{{ stock.month_label }}</span>
+                    <div>
+                        <div class="chart-track">
+                            <span
+                                class="chart-bar chart-stock-in"
+                                style="width: {{ stock.stock_in_width }}%;"
+                            ></span>
+                        </div>
+                        <div class="chart-track" style="margin-top: 4px;">
+                            <span
+                                class="chart-bar chart-stock-out"
+                                style="width: {{ stock.stock_out_width }}%;"
+                            ></span>
+                        </div>
+                    </div>
+                    <strong class="chart-value">
+                        +{{ stock.total_stock_in }} / -{{ stock.total_stock_out }}
+                    </strong>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-heading">
+            <h2>Monthly Movement Details</h2>
+        </div>
+
+        <div class="table-container analytics-table-container">
+            <table class="monthly-stock">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total Stock In</th>
+                        <th>Total Stock Out</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for stock in monthly_stock %}
+                    <tr>
+                        <td>{{ stock.month_label }}</td>
+                        <td>{{ stock.total_stock_in }}</td>
+                        <td>{{ stock.total_stock_out }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            No monthly stock movement records available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

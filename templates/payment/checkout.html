@@ -1,0 +1,580 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Checkout | AquaTrack{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <div class="page-header">
+        <h2>Payment Checkout</h2>
+        <p>
+            Choose cash, an e-wallet, online banking, or split your payment
+            between up to two different methods.
+        </p>
+    </div>
+
+    <div class="card p-4">
+
+        <h3>Order Summary</h3>
+
+        <div class="payment-summary-row">
+            <strong>Order Number</strong>
+            <span>{{ sale.order_code or "N/A" }}</span>
+        </div>
+
+        <div class="payment-summary-row">
+            <strong>Order Total</strong>
+            <span>₱{{ "%.2f"|format(sale.total_amount|float) }}</span>
+        </div>
+
+        <div class="payment-summary-row">
+            <strong>Remaining Balance</strong>
+            <strong class="payment-remaining">
+                ₱{{ "%.2f"|format(remaining_balance|float) }}
+            </strong>
+        </div>
+
+        <hr>
+
+        <form method="POST"
+              action="{{ url_for('payment.checkout', sale_id=sale.id) }}"
+              enctype="multipart/form-data"
+              id="paymentForm"
+              data-remaining-balance="{{ remaining_balance|float }}">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <h3>Payment Breakdown</h3>
+
+            <p>
+                You may use one payment method or split your payment
+                between two different methods.
+            </p>
+
+            <!-- FIRST PAYMENT -->
+            <div class="payment-method-card">
+
+                <h4>Payment Method 1</h4>
+
+                <div class="form-group">
+                    <label for="payment_method_1">
+                        Select Payment Method
+                    </label>
+
+                    <select name="payment_method_1"
+                            id="payment_method_1"
+                            class="form-control"
+                            required>
+
+                        <option value="">Choose a method</option>
+                        <option value="Cash on Pickup">Cash on Pickup</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Maya">Maya</option>
+                        <option value="Online Banking">Online Banking</option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount_1">
+                        Payment Amount (₱)
+                    </label>
+
+                    <input type="number"
+                           name="amount_1"
+                           id="amount_1"
+                           class="form-control"
+                           min="0.01"
+                           step="0.01"
+                           inputmode="decimal"
+                           required>
+                </div>
+
+                <div id="details_1" hidden>
+
+                    <div class="form-group">
+                        <label for="reference_number_1">
+                            Reference Number
+                        </label>
+
+                        <input type="text"
+                               name="reference_number_1"
+                               id="reference_number_1"
+                               class="form-control"
+                               maxlength="100"
+                               disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proof_image_1">
+                            Payment Screenshot
+                        </label>
+
+                        <input type="file"
+                               name="proof_image_1"
+                               id="proof_image_1"
+                               class="form-control"
+                               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                               disabled>
+
+                        <small>
+                            JPG, JPEG, or PNG. Maximum file size: 5MB.
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SECOND PAYMENT -->
+            <div class="payment-method-card">
+
+                <h4>Payment Method 2 (Optional)</h4>
+
+                <div class="form-group">
+                    <label for="payment_method_2">
+                        Select Second Payment Method
+                    </label>
+
+                    <select name="payment_method_2"
+                            id="payment_method_2"
+                            class="form-control">
+
+                        <option value="">No second method</option>
+                        <option value="Cash on Pickup">Cash on Pickup</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Maya">Maya</option>
+                        <option value="Online Banking">Online Banking</option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount_2">
+                        Payment Amount (₱)
+                    </label>
+
+                    <input type="number"
+                           name="amount_2"
+                           id="amount_2"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           inputmode="decimal"
+                           value="0.00">
+                </div>
+
+                <div id="details_2" hidden>
+
+                    <div class="form-group">
+                        <label for="reference_number_2">
+                            Reference Number
+                        </label>
+
+                        <input type="text"
+                               name="reference_number_2"
+                               id="reference_number_2"
+                               class="form-control"
+                               maxlength="100"
+                               disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proof_image_2">
+                            Payment Screenshot
+                        </label>
+
+                        <input type="file"
+                               name="proof_image_2"
+                               id="proof_image_2"
+                               class="form-control"
+                               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                               disabled>
+
+                        <small>
+                            JPG, JPEG, or PNG. Maximum file size: 5MB.
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PAYMENT REMINDER -->
+            <div class="payment-reminder">
+
+                <strong>Payment Reminder</strong>
+
+                <ul>
+                    <li>You can select up to two different payment methods.</li>
+                    <li>You may pay part or all of your remaining balance.</li>
+                    <li>Payment amounts cannot exceed your remaining balance.</li>
+                    <li>GCash, Maya, and Online Banking require a reference number and payment screenshot.</li>
+                    <li>Cash on Pickup does not require a payment screenshot.</li>
+                    <li>All submitted payments are subject to admin verification. Wait for review before submitting another payment.</li>
+                </ul>
+
+            </div>
+
+            <!-- PAYMENT TOTAL -->
+            <div class="payment-total-row">
+                <strong>Payment Total:</strong>
+                <span id="paymentTotal">₱0.00</span>
+            </div>
+
+            <div class="payment-total-row">
+                <strong>Balance After Payment:</strong>
+                <span id="balanceAfterPayment">
+                    ₱{{ "%.2f"|format(remaining_balance|float) }}
+                </span>
+            </div>
+
+            <div id="paymentMessage"
+                 class="payment-error"
+                 role="alert"
+                 aria-live="polite"
+                 hidden>
+            </div>
+
+            <hr>
+
+            <div class="payment-actions">
+
+                <button type="submit"
+                        class="btn btn-primary"
+                        id="submitPayment">
+                    Continue to Verification
+                </button>
+
+                <a href="{{ url_for('customer.my_orders') }}"
+                   class="btn btn-secondary">
+                    Back to My Orders
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("paymentForm");
+
+    if (!form) {
+        return;
+    }
+
+    const remainingBalance = Math.round(
+        Number(form.dataset.remainingBalance) * 100
+    );
+
+    const method1 = document.getElementById("payment_method_1");
+    const method2 = document.getElementById("payment_method_2");
+
+    const amount1 = document.getElementById("amount_1");
+    const amount2 = document.getElementById("amount_2");
+
+    const paymentTotal = document.getElementById("paymentTotal");
+    const balanceAfterPayment = document.getElementById("balanceAfterPayment");
+
+    const paymentMessage = document.getElementById("paymentMessage");
+    const submitButton = document.getElementById("submitPayment");
+
+    const onlineMethods = [
+        "GCash",
+        "Maya",
+        "Online Banking"
+    ];
+
+    let isSubmitting = false;
+
+    function getCents(input) {
+
+        const value = input.value.trim();
+
+        if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+            return NaN;
+        }
+
+        const amount = Number(value);
+
+        if (!Number.isFinite(amount)) {
+            return NaN;
+        }
+
+        return Math.round(amount * 100);
+    }
+
+    function showMessage(message) {
+
+        paymentMessage.textContent = message;
+        paymentMessage.hidden = false;
+        submitButton.disabled = true;
+
+    }
+
+    function clearMessage() {
+
+        paymentMessage.textContent = "";
+        paymentMessage.hidden = true;
+        submitButton.disabled = false;
+
+    }
+
+    function updateMethodDetails(index) {
+
+        const method = document.getElementById(
+            "payment_method_" + index
+        ).value;
+
+        const details = document.getElementById(
+            "details_" + index
+        );
+
+        const reference = document.getElementById(
+            "reference_number_" + index
+        );
+
+        const proof = document.getElementById(
+            "proof_image_" + index
+        );
+
+        const needsProof = onlineMethods.includes(method);
+
+        details.hidden = !needsProof;
+
+        reference.required = needsProof;
+        proof.required = needsProof;
+
+        reference.disabled = !needsProof;
+        proof.disabled = !needsProof;
+
+        if (!needsProof) {
+            reference.value = "";
+            proof.value = "";
+        }
+
+    }
+
+    function updatePaymentDetails() {
+
+        updateMethodDetails(1);
+        updateMethodDetails(2);
+
+        const first = getCents(amount1);
+
+        const second = amount2.value.trim() === ""
+            ? 0
+            : getCents(amount2);
+
+        if (
+            !Number.isFinite(first) ||
+            !Number.isFinite(second)
+        ) {
+
+            paymentTotal.textContent = "₱0.00";
+
+            balanceAfterPayment.textContent =
+                "₱" + (remainingBalance / 100).toFixed(2);
+
+            showMessage("Please enter valid payment amounts.");
+
+            return false;
+
+        }
+
+        const total = first + second;
+        const difference = remainingBalance - total;
+
+        paymentTotal.textContent =
+            "₱" + (total / 100).toFixed(2);
+
+        balanceAfterPayment.textContent =
+            "₱" + (difference / 100).toFixed(2);
+
+        if (first <= 0) {
+            showMessage(
+                "Please enter a valid amount for the first payment method."
+            );
+            return false;
+        }
+
+        if (second < 0) {
+            showMessage(
+                "The second payment amount cannot be negative."
+            );
+            return false;
+        }
+
+        if (!method1.value) {
+            showMessage(
+                "Please select your first payment method."
+            );
+            return false;
+        }
+
+        if (method2.value && method1.value === method2.value) {
+            showMessage(
+                "Please select two different payment methods."
+            );
+            return false;
+        }
+
+        if (!method2.value && second !== 0) {
+            showMessage(
+                "Please select a second payment method or set its amount to zero."
+            );
+            return false;
+        }
+
+        if (method2.value && second <= 0) {
+            showMessage(
+                "Please enter an amount for your second payment method."
+            );
+            return false;
+        }
+
+        if (total <= 0) {
+            showMessage(
+                "Enter a payment amount greater than zero."
+            );
+            return false;
+        }
+
+        if (total > remainingBalance) {
+            showMessage(
+                "The payment total cannot exceed your remaining balance."
+            );
+            return false;
+        }
+
+        clearMessage();
+
+        return true;
+
+    }
+
+    function validateOnlinePayment(index) {
+
+        const method = document.getElementById(
+            "payment_method_" + index
+        ).value;
+
+        if (!onlineMethods.includes(method)) {
+            return true;
+        }
+
+        const reference = document.getElementById(
+            "reference_number_" + index
+        );
+
+        const proof = document.getElementById(
+            "proof_image_" + index
+        );
+
+        if (!reference.value.trim()) {
+            showMessage(
+                "Please enter the reference number for " + method + "."
+            );
+            reference.focus();
+            return false;
+        }
+
+        if (reference.value.trim().length > 100) {
+            showMessage(
+                "Reference number must not exceed 100 characters."
+            );
+            reference.focus();
+            return false;
+        }
+
+        if (!proof.files.length) {
+            showMessage(
+                "Please upload the payment screenshot for " + method + "."
+            );
+            proof.focus();
+            return false;
+        }
+
+        const file = proof.files[0];
+
+        if (file.size <= 0) {
+            showMessage(
+                "The uploaded payment screenshot is empty."
+            );
+            proof.focus();
+            return false;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            showMessage(
+                "Each payment screenshot must not exceed 5MB."
+            );
+            proof.focus();
+            return false;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            showMessage(
+                "Please upload a valid JPG, JPEG, or PNG image."
+            );
+            proof.focus();
+            return false;
+        }
+
+        return true;
+
+    }
+
+    method1.addEventListener("change", updatePaymentDetails);
+    method2.addEventListener("change", updatePaymentDetails);
+
+    amount1.addEventListener("input", updatePaymentDetails);
+    amount2.addEventListener("input", updatePaymentDetails);
+
+    form.addEventListener("submit", function (event) {
+
+        if (isSubmitting) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!updatePaymentDetails()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!validateOnlinePayment(1)) {
+            event.preventDefault();
+            return;
+        }
+
+        if (method2.value && !validateOnlinePayment(2)) {
+            event.preventDefault();
+            return;
+        }
+
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "Processing...";
+
+    });
+
+    updatePaymentDetails();
+
+});
+</script>
+
+{% endblock %}

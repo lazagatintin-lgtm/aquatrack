@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block title %}Daily Fish Catalog | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.daily-catalog {
+    color: #172b28;
+    width: 100%;
+    min-width: 0;
+}
+
+.daily-catalog h1,
+.daily-catalog h2,
+.daily-catalog h3,
+.daily-catalog label {
+    color: #172b28;
+}
+
+.daily-catalog .page-header p,
+.daily-catalog .section-description {
+    color: #64736f;
+    line-height: 1.6;
+}
+
+.daily-catalog .catalog-section {
+    margin-top: 24px;
+}
+
+.daily-catalog .catalog-form {
+    width: 100%;
+    max-width: 650px;
+}
+
+.daily-catalog .form-group {
+    margin-bottom: 20px;
+}
+
+.daily-catalog .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.daily-catalog .form-group select,
+.daily-catalog .form-group input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.daily-catalog .form-group select:focus,
+.daily-catalog .form-group input:focus {
+    outline: none;
+    border-color: #4f9d96;
+    box-shadow: 0 0 0 3px rgba(79, 157, 150, 0.14);
+}
+
+.daily-catalog .form-help {
+    display: block;
+    margin-top: 7px;
+    color: #64736f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.daily-catalog .catalog-notice {
+    padding: 13px 16px;
+    margin-bottom: 20px;
+    border-left: 4px solid #4f9d96;
+    border-radius: 6px;
+    background: #edf7f5;
+    color: #315b55;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.daily-catalog .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.daily-catalog .data-table {
+    width: 100%;
+    min-width: 580px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.daily-catalog .data-table th,
+.daily-catalog .data-table td {
+    padding: 12px 10px;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.daily-catalog .data-table th {
+    color: #263b36;
+    white-space: normal;
+}
+
+.daily-catalog .data-table td {
+    color: #273b36;
+    vertical-align: middle;
+}
+
+.daily-catalog .code-value {
+    color: #397e79;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.daily-catalog .quantity-value {
+    font-weight: 700;
+    color: #207044;
+    font-variant-numeric: tabular-nums;
+}
+
+.daily-catalog .record-count {
+    margin-top: 5px;
+    color: #64736f;
+    font-size: 13px;
+}
+
+.daily-catalog .empty-state {
+    padding: 30px 15px;
+    text-align: center;
+}
+
+.daily-catalog .empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.daily-catalog .empty-state p {
+    color: #64736f;
+}
+
+.daily-catalog .form-actions button:focus-visible,
+.daily-catalog .page-footer a:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+.daily-catalog .page-footer {
+    margin-top: 24px;
+}
+
+.daily-catalog .page-footer a {
+    color: #397e79;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.daily-catalog .page-footer a:hover {
+    text-decoration: underline;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+    .daily-catalog .data-table th,
+    .daily-catalog .data-table td {
+        padding: 10px 8px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .daily-catalog .catalog-section {
+        margin-top: 18px;
+    }
+
+    .daily-catalog .catalog-notice {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .daily-catalog .data-table th,
+    .daily-catalog .data-table td {
+        padding: 9px 5px;
+        font-size: 12px;
+    }
+
+    .daily-catalog .form-actions .btn {
+        width: 100%;
+    }
+
+    .daily-catalog .page-footer {
+        margin-top: 20px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+    .daily-catalog .data-table th,
+    .daily-catalog .data-table td {
+        padding: 8px 3px;
+        font-size: 11px;
+    }
+
+    .daily-catalog .empty-state {
+        padding: 24px 10px;
+    }
+
+    .daily-catalog .record-count {
+        font-size: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container daily-catalog">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1>Daily Fish Catalog</h1>
+            <p>Manage the fish products available for customers today.</p>
+        </div>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div
+                    class="alert alert-{{ 'danger' if category == 'error' else category }}"
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ADD TO DAILY CATALOG -->
+    <div class="content-section catalog-section">
+
+        <div class="section-heading">
+            <h2>Add to Daily Catalog</h2>
+
+            <p class="section-description">
+                Select a fish product and set the quantity available
+                for today's customer catalog.
+            </p>
+        </div>
+
+        <div class="catalog-notice">
+            The daily catalog is for today's date. The available quantity
+            must not exceed the product's actual physical stock.
+        </div>
+
+        <form method="POST" class="catalog-form" autocomplete="off">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="form-group">
+                <label for="product_id">Fish Product</label>
+
+                <select id="product_id" name="product_id" required>
+                    <option value="">Select Fish Product</option>
+
+                    {% for product in products %}
+                        <option
+                            value="{{ product.id }}"
+                            {% if product.quantity|int <= 0 %}disabled{% endif %}
+                        >
+                            {{ product.product_code or "N/A" }}
+                            - {{ product.product_name }}
+
+                            {% if product.quantity|int <= 0 %}
+                                (Out of Stock)
+                            {% else %}
+                                (Physical Stock: {{ product.quantity }})
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <small class="form-help">
+                    The product code identifies the fish product.
+                    Products with zero physical stock cannot be added
+                    to the catalog.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="available_quantity">Available Quantity</label>
+
+                <input
+                    type="number"
+                    id="available_quantity"
+                    name="available_quantity"
+                    min="1"
+                    max="2147483647"
+                    step="1"
+                    placeholder="Enter available quantity"
+                    required
+                >
+
+                <small class="form-help">
+                    Enter the number of fish customers can order today.
+                    This quantity must not exceed the actual product stock.
+                </small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    Save Daily Catalog
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- TODAY'S CATALOG -->
+    <div class="content-section catalog-section">
+
+        <div class="section-heading">
+            <h2>Today's Fish Catalog</h2>
+
+            <p class="section-description">
+                Products currently listed for customers today.
+            </p>
+
+            <div class="record-count">
+                {{ catalog|length }} catalog entr(y/ies)
+            </div>
+        </div>
+
+        {% if catalog %}
+
+            <div class="table-responsive">
+                <table class="data-table">
+
+                    <colgroup>
+                        <col style="width: 22%;">
+                        <col style="width: 28%;">
+                        <col style="width: 18%;">
+                        <col style="width: 32%;">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <th>Catalog Code</th>
+                            <th>Fish Product</th>
+                            <th>Available Quantity</th>
+                            <th>Catalog Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for item in catalog %}
+                            <tr>
+                                <td class="code-value">
+                                    {{ item.catalog_code or "N/A" }}
+                                </td>
+
+                                <td>
+                                    <strong>{{ item.product_name }}</strong>
+                                </td>
+
+                                <td class="quantity-value">
+                                    {{ item.available_quantity }}
+                                </td>
+
+                                <td>
+                                    {% if item.catalog_date %}
+                                        {{ item.catalog_date.strftime('%B %d, %Y') }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Daily Catalog Entries</h3>
+
+                <p>
+                    No fish products have been added to today's catalog yet.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- BACK TO DASHBOARD -->
+    <div class="page-footer">
+        <a href="{{ url_for('admin.dashboard') }}">
+            Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

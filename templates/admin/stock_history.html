@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+
+{% block title %}Stock History | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.stock-history-page {
+    width: 100%;
+    max-width: 1250px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 25px 20px 45px;
+    color: #172b2a;
+}
+
+.stock-history-header {
+    margin-bottom: 25px;
+}
+
+.stock-history-header h1 {
+    color: #172b2a;
+    font-size: 27px;
+    margin: 0 0 8px;
+}
+
+.stock-history-header p {
+    color: #718582;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.stock-history-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 19px 22px;
+    margin-bottom: 20px;
+    background: #f4faf8;
+    border: 1px solid #deece8;
+    border-radius: 13px;
+}
+
+.stock-history-summary h2 {
+    color: #172b2a;
+    font-size: 16px;
+    margin: 0 0 5px;
+}
+
+.stock-history-summary p {
+    color: #718582;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.stock-history-count {
+    background: #e2f2ef;
+    color: #397e79;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.stock-history-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e1ece9;
+    border-radius: 13px;
+    background: #ffffff;
+}
+
+.stock-history-table {
+    width: 100%;
+    min-width: 1050px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.stock-history-table th {
+    padding: 12px 8px;
+    background: #f4f8f7;
+    color: #314744;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid #e1ece9;
+}
+
+.stock-history-table td {
+    padding: 12px 8px;
+    color: #263a37;
+    font-size: 12px;
+    border-bottom: 1px solid #edf2f0;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.stock-history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.stock-history-table tbody tr:hover {
+    background: #f8fbfa;
+}
+
+.stock-history-code {
+    color: #397e79;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-history-product {
+    font-weight: 650;
+    color: #172b2a;
+}
+
+.stock-history-product-code {
+    display: block;
+    margin-top: 4px;
+    color: #718582;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.stock-history-quantity {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-history-reason {
+    color: #718582;
+}
+
+.stock-history-date {
+    color: #657875;
+    overflow-wrap: anywhere;
+}
+
+.stock-movement-badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 5px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 750;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.stock-movement-in {
+    background: #e4f4eb;
+    color: #28744f;
+}
+
+.stock-movement-out {
+    background: #fceaea;
+    color: #ae4848;
+}
+
+.stock-movement-loss {
+    background: #fff2d8;
+    color: #986000;
+}
+
+.stock-movement-other {
+    background: #edf1f2;
+    color: #526663;
+}
+
+.stock-history-empty {
+    padding: 55px 20px;
+    text-align: center;
+    border: 1px dashed #cbded9;
+    border-radius: 13px;
+    background: #fbfdfc;
+}
+
+.stock-history-empty h3 {
+    color: #263a37;
+    font-size: 18px;
+    margin: 0 0 9px;
+}
+
+.stock-history-empty p {
+    color: #718582;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.stock-history-actions {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stock-history-actions a {
+    text-decoration: none;
+}
+
+.stock-history-actions a:focus-visible {
+    outline: 3px solid #4f9d96;
+    outline-offset: 3px;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+    .stock-history-page {
+        padding: 22px 16px 40px;
+    }
+
+    .stock-history-table th,
+    .stock-history-table td {
+        padding: 10px 6px;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .stock-history-page {
+        padding: 20px 12px 35px;
+    }
+
+    .stock-history-header h1 {
+        font-size: 23px;
+    }
+
+    .stock-history-header p {
+        font-size: 13px;
+    }
+
+    .stock-history-summary {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .stock-history-actions {
+        flex-direction: column;
+    }
+
+    .stock-history-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .stock-history-empty {
+        padding: 35px 14px;
+    }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 380px) {
+    .stock-history-page {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+    .stock-history-count {
+        font-size: 11px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stock-history-page">
+
+    <!-- PAGE HEADER -->
+    <div class="stock-history-header">
+        <h1>Stock History</h1>
+
+        <p>
+            Track changes in the fish inventory over time.
+            Review previous stock additions and reductions.
+        </p>
+    </div>
+
+    <!-- HISTORY RECORDS -->
+    <section>
+
+        <div class="stock-history-summary">
+            <div>
+                <h2>Inventory Movement Records</h2>
+
+                <p>
+                    Historical records of stock additions,
+                    reductions, and adjustments.
+                </p>
+            </div>
+
+            <div class="stock-history-count">
+                {{ stock_history|length }} Records
+            </div>
+        </div>
+
+        {% if stock_history %}
+
+            <div class="stock-history-table-wrapper">
+
+                <table class="stock-history-table">
+
+                    <colgroup>
+                        <col style="width: 13%;">
+                        <col style="width: 20%;">
+                        <col style="width: 12%;">
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 9%;">
+                        <col style="width: 12%;">
+                        <col style="width: 14%;">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <th>Stock Code</th>
+                            <th>Product</th>
+                            <th>Change Type</th>
+                            <th>Previous Stock</th>
+                            <th>Changed Quantity</th>
+                            <th>New Stock</th>
+                            <th>Reason</th>
+                            <th>Date Recorded</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in stock_history %}
+                            <tr>
+
+                                <td class="stock-history-code">
+                                    {{ record.stock_code or "N/A" }}
+                                </td>
+
+                                <td class="stock-history-product">
+                                    {{ record.product_name }}
+
+                                    <span class="stock-history-product-code">
+                                        {{ record.product_code or "N/A" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if record.change_type == "Stock In" %}
+                                        <span class="stock-movement-badge stock-movement-in">
+                                            Stock In
+                                        </span>
+                                    {% elif record.change_type == "Stock Out" %}
+                                        <span class="stock-movement-badge stock-movement-out">
+                                            Stock Out
+                                        </span>
+                                    {% elif record.change_type == "Inventory Loss" %}
+                                        <span class="stock-movement-badge stock-movement-loss">
+                                            Inventory Loss
+                                        </span>
+                                    {% else %}
+                                        <span class="stock-movement-badge stock-movement-other">
+                                            {{ record.change_type }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="stock-history-quantity">
+                                    {{ record.previous_quantity }}
+                                </td>
+
+                                <td class="stock-history-quantity">
+                                    {{ record.changed_quantity }}
+                                </td>
+
+                                <td class="stock-history-quantity">
+                                    {{ record.new_quantity }}
+                                </td>
+
+                                <td class="stock-history-reason">
+                                    {{ record.reason or "No reason provided" }}
+                                </td>
+
+                                <td class="stock-history-date">
+                                    {% if record.created_at %}
+                                        {{ record.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="stock-history-empty">
+                <h3>No Stock History Yet</h3>
+
+                <p>
+                    Inventory movement records will appear here
+                    when stock transactions are recorded.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- PAGE ACTIONS -->
+    <div class="stock-history-actions">
+
+        <a
+            href="{{ url_for('admin.stock_monitoring') }}"
+            class="btn btn-primary"
+        >
+            Back to Stock Monitoring
+        </a>
+
+        <a
+            href="{{ url_for('admin.dashboard') }}"
+            class="btn btn-secondary"
+        >
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+{% endblock %}

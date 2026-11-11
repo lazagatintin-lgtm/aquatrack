@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#087f8c">
+    <meta name="description" content="AquaTrack JRJ PETSHOP Stock Monitoring System">
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+    >
+
+    <title>{% block title %}AquaTrack | JRJ PETSHOP{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+{% set is_auth_landing = request.endpoint in ['auth.login', 'auth.owner_login', 'auth.register', 'auth.verify_otp_route'] %}
+{% set is_customer_auth = request.endpoint in ['auth.login', 'auth.register'] %}
+
+<body class="{% if is_auth_landing %}auth-page-open{% endif %}{% if request.endpoint in ['auth.login', 'auth.owner_login', 'auth.register'] %} auth-photo-background{% endif %}">
+
+    <header class="site-header{% if is_auth_landing %} site-header-auth{% endif %}">
+        <div class="header-container">
+
+            <a href="{{ url_for('home') }}" class="header-brand" aria-label="AquaTrack Home">
+                <img
+                    src="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+                    alt="AquaTrack JRJ PETSHOP Logo"
+                    class="brand-logo"
+                >
+            </a>
+
+            {% if not is_auth_landing %}
+            {% if session.get('user_id') %}
+
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    data-menu-toggle
+                    aria-label="Toggle navigation menu"
+                    aria-expanded="false"
+                    aria-controls="main-navigation"
+                >
+                    <span aria-hidden="true">☰</span>
+                </button>
+
+                <nav
+                    class="main-nav"
+                    id="main-navigation"
+                    data-navigation-menu
+                    aria-label="Main navigation"
+                >
+                    <a href="{{ url_for('home') }}">Home</a>
+
+                    {% if session.get('role') == 'admin' %}
+                        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('admin.products') }}">Products</a>
+                        <a href="{{ url_for('admin.daily_catalog') }}">Daily Catalog</a>
+                        <a href="{{ url_for('analytics.dashboard') }}">Analytics</a>
+                        <a href="{{ url_for('admin.inventory_reconciliation') }}">Stock Reconciliation</a>
+                        <a href="{{ url_for('reports.sales_report') }}">Reports</a>
+                        <a href="{{ url_for('admin.database_monitoring') }}">Database Monitoring</a>
+
+                    {% elif session.get('role') == 'customer' %}
+                        <a href="{{ url_for('customer.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('customer.catalog') }}">Catalog</a>
+                        <a href="{{ url_for('customer.cart') }}">My Cart</a>
+                        <a href="{{ url_for('customer.my_orders') }}">My Orders</a>
+                        <a href="{{ url_for('payment.payment_history') }}">Payment History</a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.profile') }}">My Profile</a>
+
+                    <form action="{{ url_for('auth.logout') }}" method="POST" class="nav-logout-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="nav-logout-button">Log Out</button>
+                    </form>
+                </nav>
+
+            {% else %}
+
+                <div class="header-auth-actions">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline">
+                        Customer Login
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+                        Customer Sign Up
+                    </a>
+                    <a href="{{ url_for('auth.owner_login') }}" class="btn btn-secondary">
+                        Owner Login
+                    </a>
+                </div>
+
+            {% endif %}
+            {% endif %}
+        </div>
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container" aria-live="polite" aria-atomic="true">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}" role="status">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if not is_customer_auth %}
+            {% block content %}{% endblock %}
+        {% endif %}
+
+    </main>
+
+
+    {% if not session.get('user_id') and (is_customer_auth or (not is_auth_landing and request.endpoint != 'home')) %}
+
+        <!-- DOUBLE SLIDER LOGIN AND SIGN UP -->
+        <div
+            class="auth-modal-overlay{% if is_customer_auth %} auth-direct-overlay modal-visible{% endif %}"
+            data-modal="login"
+            {% if is_customer_auth %}
+                aria-hidden="false"
+            {% else %}
+                aria-hidden="true"
+                inert
+            {% endif %}
+        >
+
+            <div
+                class="auth-slider-container{% if request.endpoint == 'auth.register' %} show-register{% endif %}"
+                data-auth-slider
+                data-initial-panel="{{ 'register' if request.endpoint == 'auth.register' else 'login' }}"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="auth-dialog-title"
+                tabindex="-1"
+            >
+
+                {% if not is_auth_landing %}
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-modal
+                    aria-label="Close account form"
+                >
+                    &times;
+                </button>
+                {% endif %}
+
+
+                <!-- LOGIN PANEL -->
+                <div class="auth-form-panel auth-login-panel">
+                    <div class="auth-form-content">
+
+                        <div class="auth-brand-lockup">
+                            <img
+                                src="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+                                alt=""
+                                class="auth-modal-logo"
+                            >
+                            <span class="auth-brand-wordmark">
+                                <strong>AquaTrack</strong>
+                                <small>JRJ PETSHOP</small>
+                            </span>
+                        </div>
+
+                        <h2 id="auth-dialog-title">Welcome Back!</h2>
+
+                        <p class="auth-panel-subtitle">
+                            Log in to your AquaTrack account.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('auth.login') }}"
+                            data-prevent-double-submit
+                        >
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group">
+                                <label for="modal-login-email">Email Address</label>
+                                <input
+                                    type="email"
+                                    id="modal-login-email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    autocomplete="email"
+                                    maxlength="100"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="modal-login-password">Password</label>
+
+                                <div class="password-input-wrapper">
+                                    <input
+                                        type="password"
+                                        id="modal-login-password"
+                                        name="password"
+                                        placeholder="Enter your password"
+                                        autocomplete="current-password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-toggle-password="modal-login-password"
+                                        aria-label="Show password"
+                                        aria-pressed="false"
+                                    >
+                                        Show
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary modal-submit btn-block">
+                                Log In
+                            </button>
+                        </form>
+
+                        <p class="auth-mobile-switch">
+                            Don't have an account?
+                            <button type="button" data-switch-auth="register">Sign Up</button>
+                        </p>
+
+                    </div>
+                </div>
+
+
+                <!-- REGISTER PANEL -->
+                <div class="auth-form-panel auth-register-panel">
+                    <div class="auth-form-content">
+
+                        <div class="auth-brand-lockup">
+                            <img
+                                src="{{ url_for('static', filename='images/aquatrack-logo.svg') }}"
+                                alt=""
+                                class="auth-modal-logo"
+                            >
+                            <span class="auth-brand-wordmark">
+                                <strong>AquaTrack</strong>
+                                <small>JRJ PETSHOP</small>
+                            </span>
+                        </div>
+
+                        <h2 id="auth-register-title">Create Account</h2>
+
+                        <p class="auth-panel-subtitle">
+                            Register for the AquaTrack customer portal.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('auth.register') }}"
+                            data-registration-form
+                            data-prevent-double-submit
+                        >
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group">
+                                <label for="modal-first-name">First Name</label>
+                                <input
+                                    type="text"
+                                    id="modal-first-name"
+                                    name="first_name"
+                                    placeholder="First name"
+                                    maxlength="100"
+                                    autocomplete="given-name"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="modal-middle-name">
+                                    Middle Name
+                                    <span class="optional-label">(Optional)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="modal-middle-name"
+                                    name="middle_name"
+                                    placeholder="Middle name"
+                                    maxlength="100"
+                                    autocomplete="additional-name"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="modal-last-name">Last Name</label>
+                                <input
+                                    type="text"
+                                    id="modal-last-name"
+                                    name="last_name"
+                                    placeholder="Last name"
+                                    maxlength="100"
+                                    autocomplete="family-name"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="modal-register-email">Email Address</label>
+                                <input
+                                    type="email"
+                                    id="modal-register-email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    maxlength="100"
+                                    autocomplete="email"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="modal-register-password">Password</label>
+
+                                <div class="password-input-wrapper">
+                                    <input
+                                        type="password"
+                                        id="modal-register-password"
+                                        name="password"
+                                        placeholder="At least 8 characters"
+                                        minlength="8"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-toggle-password="modal-register-password"
+                                        aria-label="Show password"
+                                        aria-pressed="false"
+                                    >
+                                        Show
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary modal-submit btn-block">
+                                Create Account
+                            </button>
+                        </form>
+
+                        <p class="auth-mobile-switch">
+                            Already have an account?
+                            <button type="button" data-switch-auth="login">Log In</button>
+                        </p>
+
+                    </div>
+                </div>
+
+
+                <!-- SLIDING SIDE PANEL -->
+                <div class="auth-slider-panel">
+
+                    <div class="auth-slider-content auth-slider-login-message">
+                        <h2>New to AquaTrack?</h2>
+
+                        <p>
+                            Create an account to browse available fish
+                            and manage your orders.
+                        </p>
+
+                        <button
+                            type="button"
+                            class="btn btn-slider"
+                            data-switch-auth="register"
+                        >
+                            Create Account
+                        </button>
+                    </div>
+
+                    <div class="auth-slider-content auth-slider-register-message">
+                        <h2>Welcome Back!</h2>
+
+                        <p>
+                            Log in to continue using your AquaTrack account.
+                        </p>
+
+                        <button
+                            type="button"
+                            class="btn btn-slider"
+                            data-switch-auth="login"
+                        >
+                            Log In
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- REGISTRATION CONFIRMATION -->
+        <div
+            class="modal-overlay registration-confirm-overlay"
+            data-modal="registration-confirm"
+            aria-hidden="true"
+            inert
+        >
+            <div
+                class="confirmation-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="registration-confirm-title"
+                aria-describedby="registration-confirm-description registration-guidelines-title"
+                tabindex="-1"
+            >
+                <div class="confirmation-icon" aria-hidden="true">✓</div>
+
+                <h2 id="registration-confirm-title">Confirm Registration</h2>
+
+                <p id="registration-confirm-description">
+                    Are you sure you want to create your AquaTrack account? Review these guidelines first.
+                </p>
+
+                <div class="registration-guidelines">
+                    <h3 id="registration-guidelines-title">Account guidelines</h3>
+                    <div class="registration-guideline-columns">
+                        <section aria-labelledby="registration-allowed-title">
+                            <h4 id="registration-allowed-title">Please do</h4>
+                            <ul>
+                                <li>Enter your full name.</li>
+                                <li>Use letters, spaces, apostrophes, periods, or hyphens in names.</li>
+                                <li>Use a valid email address (up to 100 characters) that you can access.</li>
+                                <li>Use at least 8 characters for your password.</li>
+                            </ul>
+                        </section>
+                        <section aria-labelledby="registration-not-allowed-title">
+                            <h4 id="registration-not-allowed-title">Please don't</h4>
+                            <ul>
+                                <li>Use someone else's identity or email address.</li>
+                                <li>Leave your full name blank or use unsupported characters.</li>
+                                <li>Enter an invalid email or a password shorter than 8 characters.</li>
+                                <li>Share your password with anyone.</li>
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="confirmation-actions">
+                    <button type="button" class="btn btn-outline" data-cancel-registration>
+                        Go Back
+                    </button>
+
+                    <button type="button" class="btn btn-primary" data-confirm-registration>
+                        Yes, Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+
+    {% if not is_auth_landing %}
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>
+                &copy; <span id="current-year">2026</span>
+                AquaTrack | JRJ PETSHOP
+            </p>
+        </div>
+    </footer>
+    {% endif %}
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const yearElement = document.getElementById("current-year");
+
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

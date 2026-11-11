@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details | AquaTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-details-page {
+    width: 100%;
+    max-width: 900px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 24px;
+    color: #24434a;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .page-header {
+    margin-bottom: 22px;
+}
+
+.product-details-page .page-header h1 {
+    margin: 0 0 8px;
+    color: #126b70;
+    font-size: 27px;
+    font-weight: 700;
+}
+
+.product-details-page .page-header p {
+    margin: 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.product-details-page .flash-messages {
+    margin-bottom: 20px;
+}
+
+.product-details-page .message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .message.success {
+    background: #e4f5ed;
+    color: #218452;
+    border: 1px solid #c9ead8;
+}
+
+.product-details-page .message.error,
+.product-details-page .message.danger {
+    background: #fde9e9;
+    color: #bd4545;
+    border: 1px solid #f5d1d1;
+}
+
+.product-details-page .message.warning {
+    background: #fff3d9;
+    color: #a66b08;
+    border: 1px solid #f2e1b8;
+}
+
+.product-details-page .message.info {
+    background: #e9f3f8;
+    color: #356b88;
+    border: 1px solid #d3e6f0;
+}
+
+.product-details-page .product-card {
+    width: 100%;
+    min-width: 0;
+    padding: 27px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(28, 83, 88, 0.05);
+}
+
+.product-details-page .product-image {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    margin-bottom: 22px;
+    border-radius: 10px;
+    background: #eff8f7;
+    object-fit: contain;
+}
+
+.product-details-page .product-card h2 {
+    margin: 0 0 17px;
+    color: #126b70;
+    font-size: 23px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .product-info {
+    margin: 0 0 13px;
+    color: #61777b;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .product-info strong {
+    color: #35656a;
+}
+
+.product-details-page .product-description {
+    margin: 18px 0;
+    color: #71858a;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .product-price {
+    margin: 20px 0;
+    color: #126b70;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.product-details-page .stock-information {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+    padding: 14px;
+    margin-bottom: 16px;
+    background: #f5faf9;
+    border: 1px solid #e1eeee;
+    border-radius: 9px;
+}
+
+.product-details-page .stock-quantity {
+    min-width: 0;
+    color: #526b70;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .stock-status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .status-available {
+    background: #e4f5ed;
+    color: #218452;
+}
+
+.product-details-page .status-unavailable {
+    background: #fde9e9;
+    color: #bd4545;
+}
+
+.product-details-page .available-date {
+    margin: 0 0 18px;
+    color: #71858a;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .add-cart-form {
+    padding-top: 18px;
+    border-top: 1px solid #edf2f2;
+}
+
+.product-details-page .form-group {
+    min-width: 0;
+    margin-bottom: 16px;
+}
+
+.product-details-page .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #526b70;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.product-details-page .form-group input {
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #d5e4e3;
+    border-radius: 7px;
+    color: #24434a;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+.product-details-page .form-group input:focus {
+    border-color: #3b9995;
+    outline: 2px solid rgba(59, 153, 149, 0.15);
+}
+
+.product-details-page .btn-primary,
+.product-details-page .btn-secondary {
+    display: inline-block;
+    max-width: 100%;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .btn-primary {
+    background: #16817e;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.product-details-page .btn-primary:hover {
+    background: #106b69;
+}
+
+.product-details-page .btn-secondary {
+    background: #edf1f2;
+    color: #89999d;
+    cursor: not-allowed;
+}
+
+.product-details-page .back-link {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 20px;
+    color: #126b70;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.product-details-page .back-link:hover {
+    color: #0b5156;
+    text-decoration: underline;
+}
+
+.product-details-page .back-link:focus-visible,
+.product-details-page button:focus-visible {
+    outline: 3px solid #75bdb7;
+    outline-offset: 3px;
+}
+
+.product-details-page .empty-message {
+    padding: 30px 20px;
+    background: #ffffff;
+    border: 1px solid #e1eeee;
+    border-radius: 12px;
+    color: #71858a;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .product-details-page {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-details-page {
+        padding: 15px;
+    }
+
+    .product-details-page .page-header {
+        margin-bottom: 18px;
+    }
+
+    .product-details-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .product-details-page .page-header p {
+        font-size: 13px;
+    }
+
+    .product-details-page .product-card {
+        padding: 19px;
+    }
+
+    .product-details-page .product-card h2 {
+        font-size: 20px;
+    }
+
+    .product-details-page .product-info,
+    .product-details-page .product-description {
+        font-size: 13px;
+    }
+
+    .product-details-page .product-price {
+        font-size: 22px;
+    }
+
+    .product-details-page .stock-information {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .product-details-page .form-group input {
+        max-width: 100%;
+    }
+
+    .product-details-page .btn-primary,
+    .product-details-page .btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .product-details-page {
+        padding: 12px;
+    }
+
+    .product-details-page .product-card {
+        padding: 15px;
+    }
+
+    .product-details-page .page-header h1 {
+        font-size: 21px;
+    }
+
+    .product-details-page .product-card h2 {
+        font-size: 18px;
+    }
+
+    .product-details-page .product-price {
+        font-size: 20px;
+    }
+
+    .product-details-page .stock-information {
+        padding: 11px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="product-details-page" aria-labelledby="product-details-title">
+
+    <header class="page-header">
+        <h1 id="product-details-title">Fish Details</h1>
+        <p>
+            View product information and daily availability at JRJ PETSHOP.
+        </p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" aria-label="Notifications">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if product %}
+        <article class="product-card" aria-labelledby="product-name">
+
+            {% if product.image_path %}
+                <img
+                    src="{{ url_for('static', filename=product.image_path) }}"
+                    alt="{{ product.product_name }}"
+                    class="product-image"
+                >
+            {% endif %}
+
+            <h2 id="product-name">{{ product.product_name }}</h2>
+
+            <p class="product-info">
+                <strong>Category:</strong>
+                {{ product.category or "Fish" }}
+            </p>
+
+            <p class="product-description">
+                {{ product.description or "No description available." }}
+            </p>
+
+            <p class="product-price">
+                ₱{{ "%.2f"|format(product.price|float) }}
+            </p>
+
+            <div class="stock-information">
+                <span class="stock-quantity">
+                    <strong>Available Quantity:</strong>
+                    {{ product.available_quantity or 0 }}
+                </span>
+
+                {% if product.available_quantity|int > 0
+                      and product.status == "Available" %}
+                    <span class="stock-status status-available">
+                        Available
+                    </span>
+                {% else %}
+                    <span class="stock-status status-unavailable">
+                        Currently Unavailable
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if product.catalog_date is defined and product.catalog_date %}
+                <p class="available-date">
+                    <strong>Available Date:</strong>
+                    {{ product.catalog_date.strftime("%B %d, %Y") }}
+                </p>
+            {% endif %}
+
+            {% if product.status == "Available"
+                  and product.available_quantity|int > 0 %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('customer.add_to_cart') }}"
+                    class="add-cart-form"
+                >
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="product_id"
+                        value="{{ product.id }}"
+                    >
+
+                    <div class="form-group">
+                        <label for="quantity">Select Quantity</label>
+
+                        <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            min="1"
+                            max="{{ product.available_quantity }}"
+                            step="1"
+                            value="1"
+                            inputmode="numeric"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Add to Cart
+                    </button>
+                </form>
+
+            {% else %}
+                <button type="button" class="btn-secondary" disabled>
+                    Currently Unavailable
+                </button>
+            {% endif %}
+
+        </article>
+    {% else %}
+        <div class="empty-message" role="status">
+            <p>Product information is not available.</p>
+        </div>
+    {% endif %}
+
+    <a
+        href="{{ url_for('customer.catalog') }}"
+        class="back-link"
+    >
+        ← Back to Daily Fish Catalog
+    </a>
+
+</section>
+{% endblock %}
