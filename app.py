@@ -233,7 +233,7 @@ def create_owner(name, email):
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT id
+            SELECT 1
             FROM tbl_users
             WHERE role = 'admin'
             LIMIT 1
@@ -247,7 +247,7 @@ def create_owner(name, email):
             )
 
         cursor.execute("""
-            SELECT id
+                SELECT 1
             FROM tbl_users
             WHERE email = %s
             LIMIT 1

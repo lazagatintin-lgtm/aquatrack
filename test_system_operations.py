@@ -78,6 +78,36 @@ class FakeMigrationCursor:
 
 class OperationsTests(unittest.TestCase):
 
+    def test_create_owner_checks_do_not_require_id_column(self):
+        connection = Mock()
+        connection.is_connected.return_value = True
+        cursor = Mock()
+        cursor.fetchone.return_value = None
+        connection.cursor.return_value = cursor
+
+        with patch.object(
+            app_module,
+            "get_db_connection",
+            return_value=connection
+        ):
+            result = app.test_cli_runner().invoke(
+                args=[
+                    "create-owner",
+                    "--name", "Test Owner",
+                    "--email", "owner@example.com"
+                ],
+                input="test-password\ntest-password\n"
+            )
+
+        self.assertEqual(result.exit_code, 0, result.output)
+        user_queries = [
+            call.args[0]
+            for call in cursor.execute.call_args_list
+            if "FROM tbl_users" in call.args[0]
+        ]
+        self.assertEqual(len(user_queries), 2)
+        self.assertTrue(all("SELECT 1" in query for query in user_queries))
+
     def test_versioned_migrations_are_ordered(self):
         self.assertEqual(
             discover_migrations(),
