@@ -212,26 +212,19 @@
         <article class="payment-method">
             <h3>GCash</h3>
             <p>
-                Pay using your GCash account. Enter the payment reference
-                number and upload your proof of payment for admin verification.
+                Scan the store QR code, then enter your payment reference
+                number and upload proof for admin verification.
             </p>
-        </article>
-
-        <article class="payment-method">
-            <h3>Maya</h3>
-            <p>
-                Pay using your Maya account. Enter the payment reference
-                number and upload your proof of payment for admin verification.
-            </p>
-        </article>
-
-        <article class="payment-method">
-            <h3>Online Banking</h3>
-            <p>
-                Pay through your online banking account. Enter the payment
-                reference number and upload your proof of payment for
-                admin verification.
-            </p>
+            {% if config.get("GCASH_QR_IMAGE") %}
+                <img
+                    src="{{ url_for('static', filename=config.get('GCASH_QR_IMAGE')) }}"
+                    alt="JRJ PETSHOP GCash payment QR code"
+                    width="220"
+                    loading="lazy"
+                >
+            {% else %}
+                <p>The store GCash QR code has not been configured.</p>
+            {% endif %}
         </article>
 
         <article class="payment-method">
@@ -246,10 +239,10 @@
             <h3 id="payment-reminders-title">Payment Reminders</h3>
 
             <ul>
-                <li>You may use cash, an e-wallet, or online banking, and split a payment between up to two different methods at a time.</li>
+                <li>You may pay by GCash, cash on pickup, or split a payment between the two methods.</li>
                 <li>Partial payments are allowed until the order is fully paid. Wait for admin review before submitting another payment.</li>
                 <li>Payment amounts must not exceed the remaining order balance.</li>
-                <li>GCash, Maya, and Online Banking payments require a reference number and proof of payment.</li>
+                <li>GCash payments require a reference number and proof of payment.</li>
                 <li>Online payments must be verified by the admin.</li>
                 <li>Your order will be marked as fully paid once the verified payments cover the total amount.</li>
             </ul>

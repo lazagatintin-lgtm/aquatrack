@@ -73,7 +73,7 @@ class Config:
     # EMAIL / GMAIL SMTP SETTINGS
     # ==========================================
 
-    MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com").strip()
     MAIL_PORT = get_env_int("MAIL_PORT", 587)
 
     MAIL_USE_TLS = get_env_bool("MAIL_USE_TLS", True)
@@ -81,16 +81,22 @@ class Config:
 
     MAIL_TIMEOUT = get_env_int("MAIL_TIMEOUT", 30)
 
-    MAIL_USERNAME = os.getenv(
-        "MAIL_USERNAME",
-        "rowenasalabsabin23@gmail.com"
+    MAIL_USERNAME = (
+        "resend"
+        if MAIL_SERVER.lower() == "smtp.resend.com"
+        else os.getenv(
+            "MAIL_USERNAME",
+            "rowenasalabsabin23@gmail.com"
+        )
     )
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
 
-    MAIL_DEFAULT_SENDER = os.getenv(
-        "MAIL_DEFAULT_SENDER",
-        MAIL_USERNAME
+    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER") or (
+        None
+        if MAIL_SERVER.lower() == "smtp.resend.com"
+        else MAIL_USERNAME
     )
+    GCASH_QR_IMAGE = os.getenv("GCASH_QR_IMAGE", "").strip()
 
     # ==========================================
     # CSRF SECURITY

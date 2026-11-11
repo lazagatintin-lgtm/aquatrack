@@ -6,6 +6,7 @@ from unittest.mock import patch
 os.environ.setdefault("SECRET_KEY", "unit-test-secret-key")
 
 from app import app
+from auth.routes import is_secure_password
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -53,6 +54,18 @@ class ProfileConnection:
 
 
 class ProfileRouteTests(unittest.TestCase):
+
+    def test_password_policy_requires_mixed_character_types(self):
+        self.assertTrue(is_secure_password("Strong-Pass1"))
+        for password in (
+            "short1!",
+            "lowercase1!",
+            "UPPERCASE1!",
+            "NoNumber!",
+            "NoSymbol12"
+        ):
+            with self.subTest(password=password):
+                self.assertFalse(is_secure_password(password))
 
     def setUp(self):
         app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
@@ -148,7 +161,7 @@ class ProfileRouteTests(unittest.TestCase):
                     "first_name": "Jordan",
                     "email": "jordan@example.com",
                     "last_name": "Sample",
-                    "password": "long-enough-password"
+                    "password": "Strong-password1!"
                 }
             )
 
@@ -158,9 +171,9 @@ class ProfileRouteTests(unittest.TestCase):
         self.assertIn("INSERT INTO tbl_users", query)
         self.assertEqual(values[1], "Jordan Sample")
         stored_password = values[3]
-        self.assertNotEqual(stored_password, "long-enough-password")
+        self.assertNotEqual(stored_password, "Strong-password1!")
         self.assertTrue(
-            check_password_hash(stored_password, "long-enough-password")
+            check_password_hash(stored_password, "Strong-password1!")
         )
 
     def test_incorrect_login_password_shows_safe_error_without_authenticating(self):

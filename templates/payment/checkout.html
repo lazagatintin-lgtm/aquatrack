@@ -9,8 +9,8 @@
     <div class="page-header">
         <h2>Payment Checkout</h2>
         <p>
-            Choose cash, an e-wallet, online banking, or split your payment
-            between up to two different methods.
+            Pay with GCash or cash on pickup. You may split payment between
+            both methods.
         </p>
     </div>
 
@@ -51,8 +51,23 @@
 
             <p>
                 You may use one payment method or split your payment
-                between two different methods.
+                between GCash and cash on pickup.
             </p>
+
+            <div id="gcashQrPanel" class="payment-method-card" hidden>
+                <h4>Pay with GCash</h4>
+                {% if config.get("GCASH_QR_IMAGE") %}
+                    <img
+                        src="{{ url_for('static', filename=config.get('GCASH_QR_IMAGE')) }}"
+                        alt="JRJ PETSHOP GCash payment QR code"
+                        width="220"
+                        loading="lazy"
+                    >
+                    <p>Scan this QR code, then enter the reference number and upload your payment screenshot.</p>
+                {% else %}
+                    <p>The store GCash QR code has not been configured. Please contact the store before selecting GCash.</p>
+                {% endif %}
+            </div>
 
             <!-- FIRST PAYMENT -->
             <div class="payment-method-card">
@@ -72,8 +87,6 @@
                         <option value="">Choose a method</option>
                         <option value="Cash on Pickup">Cash on Pickup</option>
                         <option value="GCash">GCash</option>
-                        <option value="Maya">Maya</option>
-                        <option value="Online Banking">Online Banking</option>
 
                     </select>
                 </div>
@@ -146,8 +159,6 @@
                         <option value="">No second method</option>
                         <option value="Cash on Pickup">Cash on Pickup</option>
                         <option value="GCash">GCash</option>
-                        <option value="Maya">Maya</option>
-                        <option value="Online Banking">Online Banking</option>
 
                     </select>
                 </div>
@@ -212,7 +223,7 @@
                     <li>You can select up to two different payment methods.</li>
                     <li>You may pay part or all of your remaining balance.</li>
                     <li>Payment amounts cannot exceed your remaining balance.</li>
-                    <li>GCash, Maya, and Online Banking require a reference number and payment screenshot.</li>
+                    <li>GCash requires a reference number and payment screenshot.</li>
                     <li>Cash on Pickup does not require a payment screenshot.</li>
                     <li>All submitted payments are subject to admin verification. Wait for review before submitting another payment.</li>
                 </ul>
@@ -287,11 +298,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const paymentMessage = document.getElementById("paymentMessage");
     const submitButton = document.getElementById("submitPayment");
 
-    const onlineMethods = [
-        "GCash",
-        "Maya",
-        "Online Banking"
-    ];
+    const onlineMethods = ["GCash"];
+    const gcashQrPanel = document.getElementById("gcashQrPanel");
 
     let isSubmitting = false;
 
@@ -367,6 +375,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         updateMethodDetails(1);
         updateMethodDetails(2);
+        gcashQrPanel.hidden =
+            method1.value !== "GCash" && method2.value !== "GCash";
 
         const first = getCents(amount1);
 

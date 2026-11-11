@@ -8,12 +8,20 @@ from flask import session
 
 from app import app
 from customer.routes import get_product_ids, get_valid_cart
+from payment.routes import ONLINE_PAYMENT_METHODS, PAYMENT_METHODS
 
 
 ROOT = Path(__file__).resolve().parent
 
 
 class CustomerCartTests(unittest.TestCase):
+
+    def test_only_cash_and_gcash_are_available_payment_methods(self):
+        self.assertEqual(
+            PAYMENT_METHODS,
+            {"Cash on Pickup", "GCash"}
+        )
+        self.assertEqual(ONLINE_PAYMENT_METHODS, {"GCash"})
 
     def setUp(self):
         app.config.update(

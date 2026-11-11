@@ -69,6 +69,25 @@ OTP_PURPOSE = "login"
 MAX_NAME_LENGTH = 100
 MAX_EMAIL_LENGTH = 100
 MIN_PASSWORD_LENGTH = 8
+PASSWORD_REQUIREMENTS_MESSAGE = (
+    "Password must be at least 8 characters and include an uppercase letter, "
+    "a lowercase letter, a number, and a symbol."
+)
+
+
+def is_secure_password(password):
+    if not isinstance(password, str) or len(password) < MIN_PASSWORD_LENGTH:
+        return False
+
+    return (
+        any(character.isupper() for character in password)
+        and any(character.islower() for character in password)
+        and any(character.isdigit() for character in password)
+        and any(
+            not character.isalnum() and not character.isspace()
+            for character in password
+        )
+    )
 
 
 # ==========================================
@@ -890,9 +909,9 @@ def register():
     # PASSWORD VALIDATION
     # ==========================================
 
-    if len(password) < MIN_PASSWORD_LENGTH:
+    if not is_secure_password(password):
         flash(
-            "Password must contain at least 8 characters.",
+            PASSWORD_REQUIREMENTS_MESSAGE,
             "warning"
         )
 
@@ -1058,8 +1077,8 @@ def profile():
         if not is_valid_email(email):
             flash("Please enter a valid email address.", "warning")
             return redirect(url_for("auth.profile"))
-        if new_password and len(new_password) < MIN_PASSWORD_LENGTH:
-            flash("New password must contain at least 8 characters.", "warning")
+        if new_password and not is_secure_password(new_password):
+            flash(PASSWORD_REQUIREMENTS_MESSAGE, "warning")
             return redirect(url_for("auth.profile"))
         if new_password != confirm_password:
             flash("New passwords do not match.", "warning")

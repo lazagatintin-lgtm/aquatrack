@@ -121,10 +121,13 @@ def send_otp_email(recipient_email, otp, purpose="login"):
 
         subject, body = build_otp_email(otp, purpose)
 
-        sender = (
-            current_app.config.get("MAIL_DEFAULT_SENDER")
-            or current_app.config.get("MAIL_USERNAME")
-        )
+        sender = current_app.config.get("MAIL_DEFAULT_SENDER")
+        if (
+            not sender
+            and current_app.config.get("MAIL_SERVER", "").lower()
+            != "smtp.resend.com"
+        ):
+            sender = current_app.config.get("MAIL_USERNAME")
 
         if not sender:
             logger.error("No default email sender is configured.")

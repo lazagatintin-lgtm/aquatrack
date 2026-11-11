@@ -73,6 +73,7 @@ MAIL_USE_SSL=false
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=your-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
+# GCASH_QR_IMAGE=images/gcash-qr.png
 APP_ENV=development
 SESSION_COOKIE_SECURE=false
 ```
@@ -81,6 +82,9 @@ Notes:
 - Use a long random string for `SECRET_KEY`
 - If your XAMPP MySQL user is not `root`, change `MYSQL_USER` and `MYSQL_PASSWORD`
 - For email OTP features, configure a valid Gmail SMTP app password
+- To display the store's GCash QR at checkout, place the official QR image in
+	`static/images/` and set `GCASH_QR_IMAGE` to its path relative to `static`,
+	for example `images/gcash-qr.png`
 
 ## 7) Apply database migrations
 

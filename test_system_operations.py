@@ -112,7 +112,7 @@ class OperationsTests(unittest.TestCase):
                     "--name", "Test Owner",
                     "--email", "owner@example.com"
                 ],
-                input="test-password\ntest-password\n"
+                input="Strong-password1!\nStrong-password1!\n"
             )
 
         self.assertEqual(result.exit_code, 0, result.output)

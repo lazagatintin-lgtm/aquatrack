@@ -210,8 +210,14 @@
                     id="new-password"
                     name="new_password"
                     minlength="8"
+                    pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,}"
+                    title="At least 8 characters, including uppercase, lowercase, a number, and a symbol."
+                    aria-describedby="profile-password-requirements"
                     autocomplete="new-password"
                 >
+                <small id="profile-password-requirements" class="form-help">
+                    If changing it, use at least 8 characters with uppercase, lowercase, a number, and a symbol.
+                </small>
             </div>
 
             <div class="form-group">

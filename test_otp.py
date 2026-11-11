@@ -190,6 +190,38 @@ class OtpEmailTests(unittest.TestCase):
         self.assertEqual(message.recipients, ["customer@example.com"])
         self.assertIn("000007", message.body)
 
+    def test_resend_requires_an_explicit_sender(self):
+        previous_config = {
+            key: app.config.get(key)
+            for key in (
+                "MAIL_SERVER",
+                "MAIL_USERNAME",
+                "MAIL_DEFAULT_SENDER"
+            )
+        }
+        previous_mail = app.extensions.get("mail")
+        mail_mock = Mock()
+        app.extensions["mail"] = mail_mock
+        app.config.update(
+            MAIL_SERVER="smtp.resend.com",
+            MAIL_USERNAME="resend",
+            MAIL_DEFAULT_SENDER=None
+        )
+
+        try:
+            with app.app_context():
+                sent = send_otp_email(
+                    "customer@example.com",
+                    "000007",
+                    purpose="login"
+                )
+        finally:
+            app.extensions["mail"] = previous_mail
+            app.config.update(previous_config)
+
+        self.assertFalse(sent)
+        mail_mock.send.assert_not_called()
+
     def test_rejects_malformed_code_without_sending_email(self):
         mail_mock = Mock()
         previous_mail = app.extensions.get("mail")

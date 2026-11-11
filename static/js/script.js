@@ -595,14 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             submitButtons.forEach((button) => {
                 button.disabled = true;
-
-                if (button.tagName === "BUTTON") {
-                    button.dataset.originalText = button.innerHTML;
-                    button.innerHTML = "Please wait...";
-                } else {
-                    button.dataset.originalValue = button.value;
-                    button.value = "Please wait...";
-                }
+                button.setAttribute("aria-busy", "true");
             });
         });
     });

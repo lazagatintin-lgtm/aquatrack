@@ -333,9 +333,12 @@
                                         type="password"
                                         id="modal-register-password"
                                         name="password"
-                                        placeholder="At least 8 characters"
+                                        placeholder="Create a strong password"
                                         minlength="8"
+                                        pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,}"
+                                        title="At least 8 characters, including uppercase, lowercase, a number, and a symbol."
                                         autocomplete="new-password"
+                                        aria-describedby="password-requirements"
                                         required
                                     >
 
@@ -349,6 +352,9 @@
                                         Show
                                     </button>
                                 </div>
+                                <small id="password-requirements" class="form-help">
+                                    Use at least 8 characters with an uppercase letter, a lowercase letter, a number, and a symbol.
+                                </small>
                             </div>
 
                             <button type="submit" class="btn btn-primary modal-submit btn-block">

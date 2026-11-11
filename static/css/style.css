@@ -2288,12 +2288,20 @@ body.auth-page-open {
         linear-gradient(135deg, #F0F8F7, #E4F5F4);
 }
 
-    body.auth-photo-background {
-        background:
-        linear-gradient(90deg, transparent 0 50%, #087F8C 50% 100%),
-        url("/static/images/login-background.jpg") left center / 50% 100% no-repeat,
-        var(--primary-light);
-    }
+body.auth-photo-background {
+    position: relative;
+    isolation: isolate;
+    background: #087F8C;
+}
+
+body.auth-photo-background::before {
+    position: fixed;
+    inset: 0 50% 0 0;
+    z-index: -1;
+    background: url("/static/images/Messenger_creation_A39665A3-0EA9-4930-B526-23AE74AC6E8D.jpeg") center / cover no-repeat;
+    content: "";
+    pointer-events: none;
+}
 
 body.auth-page-open .main-content {
     position: relative;
@@ -2334,6 +2342,10 @@ body.auth-page-open .auth-modal-overlay {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     pointer-events: auto;
+}
+
+body.auth-page-open.auth-photo-background .auth-modal-overlay {
+    background: transparent;
 }
 
 body.auth-page-open .auth-modal-overlay.auth-direct-overlay {
@@ -2404,13 +2416,6 @@ body.auth-page-open .registration-confirm-overlay {
     body.auth-page-open .auth-modal-overlay.auth-direct-overlay {
         inset: 66px 0 0;
         padding: 12px;
-    }
-
-    body.auth-photo-background {
-        background:
-            linear-gradient(180deg, transparent 0 50%, #087F8C 50% 100%),
-            url("/static/images/login-background.jpg") center top / 100% 50% no-repeat,
-            var(--primary-light);
     }
 
     body.auth-page-open .auth-direct-overlay .auth-slider-container {

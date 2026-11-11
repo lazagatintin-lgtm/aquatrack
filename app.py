@@ -199,7 +199,8 @@ def create_owner(name, email):
 
     from auth.routes import (
         MAX_NAME_LENGTH,
-        MIN_PASSWORD_LENGTH,
+        PASSWORD_REQUIREMENTS_MESSAGE,
+        is_secure_password,
         is_valid_email,
         is_valid_name
     )
@@ -219,10 +220,8 @@ def create_owner(name, email):
     if not is_valid_email(email):
         raise click.ClickException("Please enter a valid email address.")
 
-    if len(password) < MIN_PASSWORD_LENGTH:
-        raise click.ClickException(
-            "Password must contain at least 8 characters."
-        )
+    if not is_secure_password(password):
+        raise click.ClickException(PASSWORD_REQUIREMENTS_MESSAGE)
 
     connection = None
     cursor = None

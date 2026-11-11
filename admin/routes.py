@@ -1048,13 +1048,15 @@ def stock_monitoring():
     try:
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
+        product_id_column = get_product_primary_key_column(cursor)
 
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT
-                id,
+            `{product_id_column}` AS id,
                 product_code,
                 product_name,
                 category,
+                price,
                 quantity,
                 min_stock,
                 max_stock,
@@ -1074,7 +1076,7 @@ def stock_monitoring():
 
         products_list = cursor.fetchall()
 
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT
                 sh.id,
                 sh.stock_code,
@@ -1088,7 +1090,7 @@ def stock_monitoring():
                 p.product_name
             FROM tbl_stock_history AS sh
             INNER JOIN tbl_products AS p
-                ON sh.product_id = p.id
+                ON sh.product_id = p.`{product_id_column}`
             ORDER BY sh.created_at DESC, sh.id DESC
             LIMIT 100
         """)

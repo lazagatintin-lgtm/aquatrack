@@ -36,15 +36,11 @@ from auth.email_service import send_otp_email
 # PAYMENT SETTINGS
 PAYMENT_METHODS = {
     "Cash on Pickup",
-    "GCash",
-    "Maya",
-    "Online Banking"
+    "GCash"
 }
 
 ONLINE_PAYMENT_METHODS = {
-    "GCash",
-    "Maya",
-    "Online Banking"
+    "GCash"
 }
 
 MAX_PROOF_SIZE = 5 * 1024 * 1024
