@@ -84,6 +84,7 @@ def apply_migrations(connection):
                     "SELECT RELEASE_LOCK(%s)",
                     (LOCK_NAME,)
                 )
+                lock_cursor.fetchone()
             except Error:
                 logger.exception("Could not release migration lock.")
             finally:

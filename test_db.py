@@ -11,12 +11,33 @@ from database.db import (
     generate_custom_code,
     get_product_primary_key_column
 )
+from database.migrations.helpers import ensure_legacy_code
 
 
 ROOT = Path(__file__).resolve().parent
 
 
 class CodeGeneratorTests(unittest.TestCase):
+
+    def test_legacy_code_backfill_uses_table_primary_key(self):
+        cursor = Mock()
+        cursor.fetchone.side_effect = [(1,), (1,)]
+        cursor.fetchall.return_value = [("product_id",)]
+
+        ensure_legacy_code(
+            cursor,
+            "tbl_products",
+            "product_code",
+            "uq_products_product_code",
+            "LEGACY-P-"
+        )
+
+        update_query = next(
+            call.args[0]
+            for call in cursor.execute.call_args_list
+            if call.args[0].startswith("UPDATE `tbl_products`")
+        )
+        self.assertIn("CONCAT(%s, `product_id`)", update_query)
 
     def test_generated_codes_match_configured_segment_lengths(self):
         cursor = Mock()

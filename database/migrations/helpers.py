@@ -38,6 +38,25 @@ def unique_index_exists(cursor, table_name, column_name):
     return cursor.fetchone() is not None
 
 
+def get_primary_key_column(cursor, table_name):
+    cursor.execute("""
+        SELECT COLUMN_NAME
+        FROM information_schema.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = %s
+          AND CONSTRAINT_NAME = 'PRIMARY'
+        ORDER BY ORDINAL_POSITION
+        LIMIT 2
+    """, (table_name,))
+    rows = cursor.fetchall()
+    if len(rows) != 1:
+        raise RuntimeError(
+            f"Table {table_name} must have a single-column primary key "
+            "to backfill legacy codes."
+        )
+    return rows[0][0]
+
+
 def ensure_legacy_code(
     cursor,
     table_name,
@@ -51,9 +70,10 @@ def ensure_legacy_code(
         column_name,
         "VARCHAR(20) NULL"
     )
+    primary_key = get_primary_key_column(cursor, table_name)
     cursor.execute(
         f"UPDATE `{table_name}` "
-        f"SET `{column_name}` = CONCAT(%s, id) "
+        f"SET `{column_name}` = CONCAT(%s, `{primary_key}`) "
         f"WHERE `{column_name}` IS NULL OR `{column_name}` = ''",
         (legacy_prefix,)
     )
