@@ -37,7 +37,8 @@ class CodeGeneratorTests(unittest.TestCase):
 
         statements = [call.args[0] for call in cursor.execute.call_args_list]
         self.assertIn(
-            "ALTER TABLE `tbl_users` RENAME COLUMN `user_id` TO `id`",
+            "ALTER TABLE `tbl_users` "
+            "CHANGE COLUMN `user_id` `id` INT NOT NULL AUTO_INCREMENT",
             statements
         )
         self.assertTrue(any(

@@ -64,7 +64,7 @@ def normalize_legacy_user_schema(cursor):
     if has_user_id and not has_id:
         cursor.execute(
             "ALTER TABLE `tbl_users` "
-            "RENAME COLUMN `user_id` TO `id`"
+            "CHANGE COLUMN `user_id` `id` INT NOT NULL AUTO_INCREMENT"
         )
     elif not has_id:
         raise RuntimeError(
