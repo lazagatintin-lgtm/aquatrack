@@ -1,7 +1,7 @@
 from .base import BaseEntity
 from .product import Product
 from .stock import InventoryLoss, StockIn, StockMovement, StockOut
-from .user import Admin, Customer, User
+from .users import Admin, Customer, User
 
 __all__ = (
     "Admin",
